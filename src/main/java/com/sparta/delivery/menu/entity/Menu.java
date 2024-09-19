@@ -1,9 +1,16 @@
 package com.sparta.delivery.menu.entity;
-import com.sparta.delivery.restorant.entity.Restaurant;
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.sparta.delivery.cart.entity.Cart;
+import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.menu.enums.MenuStatus;
 import jakarta.persistence.*;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 @Entity
+@NoArgsConstructor
+@Getter
 public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +33,18 @@ public class Menu {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MenuStatus status; // 메뉴 상태 (AVAILABLE, DELETED)
+
+    public Menu(Restaurant restaurant, String name, int price, MenuStatus status) {
+        this.restaurant = restaurant;
+        this.name = name;
+        this.price = price;
+        this.status = status;
+}
+    public void serCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
 }

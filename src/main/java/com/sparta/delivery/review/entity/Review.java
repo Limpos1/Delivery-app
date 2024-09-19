@@ -1,6 +1,6 @@
 package com.sparta.delivery.review.entity;
 
-import com.sparta.delivery.order.entity.Order;
+import com.sparta.delivery.order.entity.Orders;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ public class Review {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
-    private Order orderId;
+    private Orders orderId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)

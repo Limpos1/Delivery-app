@@ -4,9 +4,11 @@ import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.Getter;
 
 
 @Entity
+@Getter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

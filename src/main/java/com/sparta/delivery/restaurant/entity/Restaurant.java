@@ -1,11 +1,14 @@
-package com.sparta.delivery.restorant.entity;
+package com.sparta.delivery.restaurant.entity;
 
-import com.sparta.delivery.restorant.enums.RestaurantStatus;
+import com.sparta.delivery.restaurant.enums.RestaurantStatus;
+import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalTime;
 
 @Entity
+@Getter
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +32,6 @@ public class Restaurant {
 
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status = RestaurantStatus.OPEN; // 가게 상태 (OPEN, CLOSED)
+
+
 }

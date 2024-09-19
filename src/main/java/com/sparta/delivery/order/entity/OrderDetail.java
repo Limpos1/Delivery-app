@@ -9,7 +9,7 @@ public class OrderDetail {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
-    private Order orderId;
+    private Orders orderId;
 
     @Column(name="menu_id")
     private Long menuId;
