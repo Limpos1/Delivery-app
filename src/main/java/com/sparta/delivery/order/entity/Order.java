@@ -14,15 +14,20 @@ public class Order {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", nullable = false)
-    private Menu menu; // 주문된 메뉴
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "restaurant_id", nullable = false)
-    private Restaurant restaurant; // 메뉴가 속한 가게
+    @JoinColumn(name = "user_id", nullable = false)
+    private User userId;
 
     @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime orderTime; // 주문 시각
+
+    @Column(name = "modified_at")
+    private LocalDateTime modifiedAt;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태
