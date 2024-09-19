@@ -1,8 +1,10 @@
 
 package com.sparta.delivery.cart.service;
 
+import com.sparta.delivery.cart.dto.CartItemDto;
 import com.sparta.delivery.cart.dto.cartsave.CartSaveRequestDto;
 import com.sparta.delivery.cart.dto.cartsave.CartSaveResponseDto;
+import com.sparta.delivery.cart.dto.cartviewall.CartViewAllResponseDto;
 import com.sparta.delivery.cart.entity.Cart;
 import com.sparta.delivery.cart.repository.CartRepository;
 import com.sparta.delivery.menu.entity.Menu;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +65,20 @@ public class CartService {
         return new CartSaveResponseDto(savedCart.getId(),user.getId(),savedCart.getMenus());
         //카트 저장
 
+    }
+
+    public CartViewAllResponseDto getViewAllCart(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Cart cart = cartRepository.findByUser(user)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        List<CartItemDto> items = cart.getMenus().stream()
+                .map(menu -> new CartItemDto(menu, cart.getCount()))
+                .toList();
+
+        return new CartViewAllResponseDto(cart.getId(),user.getId(),items, cart.getCount(),cart.getLastUpdated());
     }
 }
 

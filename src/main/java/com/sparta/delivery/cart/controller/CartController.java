@@ -24,4 +24,8 @@ public class CartController {
         return ResponseEntity.ok(cartService.saveCart(cartSaveRequestDto));
     }
 
+    @GetMapping("/carts/{userId}")
+    public ResponseEntity<CartViewAllResponseDto> getViewAllCarts(@PathVariable Long userId){
+        return ResponseEntity.ok(cartService.getViewAllCart(userId));
+    }
 }
