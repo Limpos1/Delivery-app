@@ -12,7 +12,11 @@ public class Menu {
     private String name; // 메뉴 이름
 
     @Column(nullable = false)
-    private int Long; // 메뉴 가격
+    private int price; // 메뉴 가격
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id")
+    private Cart cart; // 해당 메뉴가 속한 카트 (카트와의 관계 설정)
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
