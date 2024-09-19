@@ -3,7 +3,7 @@ package com.sparta.delivery.entity;
 import com.sparta.delivery.enums.UserRole;
 import com.sparta.delivery.enums.UserStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;g
+import jakarta.validation.constraints.Email;
 
 
 @Entity
