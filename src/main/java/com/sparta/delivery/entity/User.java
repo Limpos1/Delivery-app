@@ -1,9 +1,9 @@
 package com.sparta.delivery.entity;
 
 import com.sparta.delivery.enums.UserRole;
+import com.sparta.delivery.enums.UserStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Email;g
 
 
 @Entity
@@ -12,15 +12,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     @Email
     private String email; // 사용자 아이디 (이메일)
 
-    @Size(min = 8, message = "비밀번호는 최소 8글자 이상이어야 합니다.")
+    @Column(nullable = false, length = 100)
     private String password; // 비밀번호
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role; //USER, OWNER
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
 }

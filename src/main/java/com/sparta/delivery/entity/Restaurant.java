@@ -12,21 +12,21 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "store_name",nullable = false,length = 50)
     private String name; // 가게 이름
 
-    @Column(nullable = false)
-    private int minOrderAmount; // 최소 주문 금액
+    @Column(name = "min_order_price",nullable = false)
+    private Long minOrderAmount; // 최소 주문 금액
 
-    @Column(nullable = false)
+    @Column(name = "openedAt",nullable = false)
     private LocalTime openTime; // 오픈 시간
 
-    @Column(nullable = false)
+    @Column(name = "closedAt", nullable = false)
     private LocalTime closeTime; // 마감 시간
 
-    //테이블 관계 설정필요
-    @Column(nullable = false)
-    private UserRole owner; // 가게 소유주 (사장님)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User ownerId; // 가게 소유주 (사장님)
 
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status = RestaurantStatus.OPEN; // 가게 상태 (OPEN, CLOSED)
