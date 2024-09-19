@@ -1,4 +1,4 @@
-package com.sparta.delivery.restorant.enums;
+package com.sparta.delivery.restaurant.enums;
 
 public enum RestaurantStatus {
     OPEN, // 영업중
