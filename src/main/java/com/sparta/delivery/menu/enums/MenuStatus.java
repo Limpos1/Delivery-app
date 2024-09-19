@@ -1,4 +1,4 @@
-package com.sparta.delivery.enums;
+package com.sparta.delivery.menu.enums;
 
 public enum MenuStatus {
     AVAILABLE, // 사용 가능한 메뉴

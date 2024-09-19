@@ -1,5 +1,6 @@
-package com.sparta.delivery.entity;
+package com.sparta.delivery.cart.entity;
 
+import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
 
 import java.util.List;
