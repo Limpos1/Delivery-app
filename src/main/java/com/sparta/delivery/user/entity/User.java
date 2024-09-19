@@ -1,7 +1,7 @@
-package com.sparta.delivery.entity;
+package com.sparta.delivery.user.entity;
 
-import com.sparta.delivery.enums.UserRole;
-import com.sparta.delivery.enums.UserStatus;
+import com.sparta.delivery.user.enums.UserRole;
+import com.sparta.delivery.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 

@@ -1,4 +1,4 @@
-package com.sparta.delivery.enums;
+package com.sparta.delivery.user.enums;
 
 public enum UserStatus {
     NON_WITHDRAWAL, // 미탈퇴

@@ -1,5 +1,6 @@
-package com.sparta.delivery.entity;
-import com.sparta.delivery.enums.MenuStatus;
+package com.sparta.delivery.menu.entity;
+import com.sparta.delivery.restorant.entity.Restaurant;
+import com.sparta.delivery.menu.enums.MenuStatus;
 import jakarta.persistence.*;
 
 @Entity

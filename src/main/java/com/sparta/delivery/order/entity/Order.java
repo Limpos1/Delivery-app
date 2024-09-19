@@ -1,6 +1,6 @@
-package com.sparta.delivery.entity;
+package com.sparta.delivery.order.entity;
 
-import com.sparta.delivery.enums.OrderStatus;
+import com.sparta.delivery.order.enums.OrderStatus;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
