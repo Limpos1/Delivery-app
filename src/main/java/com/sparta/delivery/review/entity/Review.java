@@ -1,5 +1,6 @@
-package com.sparta.delivery.entity;
+package com.sparta.delivery.review.entity;
 
+import com.sparta.delivery.order.entity.Order;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.sparta.delivery.entity;
+package com.sparta.delivery.restorant.entity;
 
 import com.sparta.delivery.enums.RestaurantStatus;
 import com.sparta.delivery.enums.UserRole;
