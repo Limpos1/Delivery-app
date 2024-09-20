@@ -32,8 +32,15 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 //--------- 직접 추가한 부분
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'mysql:mysql-connector-java' // MySQL 같은 데이터베이스에 맞게 수정
+    //runtimeOnly 'mysql:mysql-connector-java' // MySQL 같은 데이터베이스에 맞게 수정
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    //runtimeOnly 'com.mysql:mysql-connector-j'
+    //버전바꿈
+    //implementation group: 'com.mysql', name: 'mysql-connector-j', version: '9.0.0'
+    runtimeOnly 'com.mysql:mysql-connector-j:9.0.0'
+
+
+
 }
 
 tasks.named('test') {
