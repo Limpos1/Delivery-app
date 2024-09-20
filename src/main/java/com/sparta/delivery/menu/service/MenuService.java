@@ -93,4 +93,33 @@ public class MenuService {
 
 
     }
+
+    //메뉴 삭제
+    public void deleteMenu(Long menuId, MenuDeleteRequestDto menuDeleteRequestDto) {
+        //사용자 정보 확인
+        User user = userRepository.findById(menuDeleteRequestDto.getUserId())
+                .orElseThrow(()-> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        //사장님인지 확인
+        if (user.getRole() != UserRole.OWNER){
+            throw new IllegalArgumentException("메뉴를 삭제할 권한이 없습니다.");
+        }
+
+        //삭제할 메뉴 확인
+        Menu menu = menuRepository.findById((menuDeleteRequestDto.getUserId()))
+                .orElseThrow(()-> new IllegalArgumentException("삭제할 메뉴를 찾을 수 없습니다."));
+
+        //해당 메뉴가 본인 가게 메뉴인지 확인
+        Restaurant restaurant = restaurantRepository.findById(menuDeleteRequestDto.getRestaurant().getStoreId())
+                .orElseThrow(()-> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+        if (!restaurant.getOwnerId().equals(user)) {
+            throw new IllegalArgumentException("본인의 가게만 삭제 할 수 있습니다.");
+        }
+
+        //메뉴 상태를 enum의 'DELETE'로 변경
+        menu.updateStatus(MenuStatus.DELETED);
+
+        menuRepository.save(menu);
+
+    }
 }

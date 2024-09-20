@@ -1,9 +1,6 @@
 package com.sparta.delivery.menu.controller;
 
-import com.sparta.delivery.menu.dto.MenuSaveRequestDto;
-import com.sparta.delivery.menu.dto.MenuSaveResponseDto;
-import com.sparta.delivery.menu.dto.MenuUpdateRequestDto;
-import com.sparta.delivery.menu.dto.MenuUpdateResponseDto;
+import com.sparta.delivery.menu.dto.*;
 import com.sparta.delivery.menu.service.MenuService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,4 +27,11 @@ public class MenuController {
         return ResponseEntity.ok(response);
     }
 
+    //메뉴 삭제
+    @DeleteMapping("/{menuId}")
+    public ResponseEntity<String> deleteMenu(@PathVariable Long menuId, @RequestBody MenuDeleteRequestDto menuDeleteRequestDto){
+        menuService.deleteMenu(menuId,menuDeleteRequestDto);
+        return ResponseEntity.ok("메뉴가 삭제되었습니다.");
+
+    }
 }

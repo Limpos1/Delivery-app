@@ -32,6 +32,7 @@ public class Menu {
     @Column(nullable = false)
     private MenuStatus status; // 메뉴 상태 (AVAILABLE, DELETED)
 
+    //메뉴 생성자
     public Menu(String name, int price, Restaurant restaurant, MenuStatus status) {
         this.name = name;
         this.price = price;
@@ -39,8 +40,14 @@ public class Menu {
         this.status = status;
     }
 
+    //메뉴 업데이트 메서드
     public void update(String name, int price){
         this.name = name;
         this.price = price;
+    }
+
+    //메뉴 삭제시 상태 업데이트 메서드
+    public void updateStatus(MenuStatus status){
+        this.status = status;
     }
 }
