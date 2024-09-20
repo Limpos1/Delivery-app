@@ -1,11 +1,8 @@
 package com.sparta.delivery.cart.dto.cartviewall;
 
 import com.sparta.delivery.cart.dto.CartItemDto;
-import com.sparta.delivery.menu.entity.Menu;
-import com.sparta.delivery.user.entity.User;
 import lombok.Getter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

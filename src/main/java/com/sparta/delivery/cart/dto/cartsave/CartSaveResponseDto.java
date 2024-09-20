@@ -1,6 +1,5 @@
 package com.sparta.delivery.cart.dto.cartsave;
 
-import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.menu.entity.Menus;
 import lombok.Getter;
 

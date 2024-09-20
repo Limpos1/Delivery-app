@@ -11,16 +11,13 @@ import com.sparta.delivery.cart.entity.CartItem;
 import com.sparta.delivery.cart.repository.CartRepository;
 import com.sparta.delivery.menu.entity.Menus;
 import com.sparta.delivery.menu.repository.MenuRepository;
-import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.restaurant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -126,6 +123,14 @@ public class CartService {
                 menuiIems,
                 totalCount,
                 cart.getLastupdated());
+    }
+
+    public void deleteCart(Long userId) {
+        if(!cartRepository.existsById(userId)){
+            throw new IllegalArgumentException("User not found");
+        } else {
+            cartRepository.deleteById(userId);
+        }
     }
 }
 
