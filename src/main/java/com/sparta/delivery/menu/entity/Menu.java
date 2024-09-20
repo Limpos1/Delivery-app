@@ -3,8 +3,12 @@ import com.sparta.delivery.cart.entity.Cart;
 import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.menu.enums.MenuStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
+@NoArgsConstructor
 public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +31,11 @@ public class Menu {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MenuStatus status; // 메뉴 상태 (AVAILABLE, DELETED)
+
+    public Menu(String name, int price, Restaurant restaurant, MenuStatus status) {
+        this.name = name;
+        this.price = price;
+        this.restaurant = restaurant;
+        this.status = status;
+    }
 }
