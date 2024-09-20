@@ -56,6 +56,7 @@ public class Cart {
 
     public void clearCart(){
         this.cartItems.clear();
+        this.lastupdated = LocalDateTime.now();
     }
 }
 

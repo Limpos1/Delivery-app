@@ -1,4 +1,4 @@
-package com.sparta.delivery.order.enums;
+package com.sparta.delivery.orders.enums;
 
 public enum OrderStatus {
     PENDING,     // 대기 중

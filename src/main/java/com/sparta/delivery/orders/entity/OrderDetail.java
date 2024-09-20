@@ -1,4 +1,4 @@
-package com.sparta.delivery.order.entity;
+package com.sparta.delivery.orders.entity;
 
 import jakarta.persistence.*;
 
