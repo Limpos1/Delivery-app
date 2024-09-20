@@ -1,13 +1,19 @@
 package com.sparta.delivery.user.entity;
 
+import com.sparta.delivery.common.Timestamped;
+import com.sparta.delivery.user.dto.SignupRequestDto;
 import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Entity
-public class User {
+@Getter
+@NoArgsConstructor
+public class User extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,4 +33,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+
+
+    public User(SignupRequestDto requestDto, String encodedPassword) {
+        this.email = requestDto.getEmail();
+        this.password = encodedPassword;
+        this.role = requestDto.getRole();
+        this.status = UserStatus.NON_WITHDRAWAL;
+    }
+
+    public void update() {
+        this.status = UserStatus.WITHDRAWAL;
+    }
 }
