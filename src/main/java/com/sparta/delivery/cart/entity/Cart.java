@@ -1,21 +1,21 @@
 package com.sparta.delivery.cart.entity;
 
-import com.sparta.delivery.menu.entity.Menu;
+import com.sparta.delivery.menu.entity.Menus;
 import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-
 @NoArgsConstructor
-public class Cart{
+public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -24,37 +24,41 @@ public class Cart{
     @JoinColumn(name = "user_id", nullable = false)
     private User user; //
 
-    @Column(name = "menu_id")
-    @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY)
-    private List<Menu> menus = new ArrayList<>();
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
 
     @Column
-    private Long count;
+    private LocalDateTime lastupdated;
 
-    @Column
-    private LocalDateTime lastUpdated;
-
-    public Cart(User user, Long count) {
+    public Cart(User user) {
         this.user = user;
-        this.count = count;
-        this.lastUpdated = LocalDateTime.now();
+        this.lastupdated = LocalDateTime.now();
     }
 
-    public void addMenu(Menu menu) {
-        menus.add(menu);
-        menu.serCart(this);
+    public void addOrUpdateMenu(Menus menu, Long count){
+        CartItem viewCartItem = this.cartItems.stream()
+                .filter(cartItem -> cartItem.getMenu().equals(menu))
+                .findFirst()
+                .orElse(null);
+
+        if(viewCartItem != null){
+            viewCartItem.setCount(count);
+        } else {
+            CartItem cartItem = new CartItem(this, menu, count);
+            this.cartItems.add(cartItem);
+        }
+
+        this.lastupdated = LocalDateTime.now();
     }
 
-    public void removeMenu(Menu menu) {
-        menus.remove(menu);
-        menu.serCart(null);
+    public void removeMenu(Menus menu) {
+        this.cartItems.removeIf(cartItem -> cartItem.getMenu().equals(menu));
+        this.lastupdated = LocalDateTime.now();
     }
 
-    public void clearCart() {
-        this.menus.clear();
-        this.count = 0L;
+    public void clearCart(){
+        this.cartItems.clear();
     }
-
-
 }
+
 

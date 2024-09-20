@@ -1,17 +1,19 @@
 package com.sparta.delivery.menu.entity;
-import com.fasterxml.jackson.annotation.JacksonInject;
-import com.sparta.delivery.cart.entity.Cart;
-import com.sparta.delivery.restaurant.entity.Restaurant;
-import com.sparta.delivery.menu.enums.MenuStatus;
-import jakarta.persistence.*;
 
+import com.sparta.delivery.cart.entity.CartItem;
+import com.sparta.delivery.menu.enums.MenuStatus;
+import com.sparta.delivery.restaurant.entity.Restaurant;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @Getter
-public class Menu {
+public class Menus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,9 +24,8 @@ public class Menu {
     @Column(nullable = false)
     private int price; // 메뉴 가격
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
-    private Cart cart; // 해당 메뉴가 속한 카트 (카트와의 관계 설정)
+    @OneToMany(mappedBy = "menu") // 해당 메뉴가 속한 카트 (카트와의 관계 설정)
+    private List<CartItem> cartItems = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
@@ -34,14 +35,15 @@ public class Menu {
     @Column(nullable = false)
     private MenuStatus status; // 메뉴 상태 (AVAILABLE, DELETED)
 
-    public Menu(Restaurant restaurant, String name, int price, MenuStatus status) {
+    public Menus(Restaurant restaurant, String name, int price, MenuStatus status) {
         this.restaurant = restaurant;
         this.name = name;
         this.price = price;
         this.status = status;
-}
-    public void serCart(Cart cart) {
-        this.cart = cart;
+    }
+
+    public void setCartItems(List<CartItem> cartItems) {
+        this.cartItems = cartItems;
     }
 
     public void setRestaurant(Restaurant restaurant) {

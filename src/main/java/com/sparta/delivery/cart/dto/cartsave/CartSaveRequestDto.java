@@ -1,6 +1,6 @@
 package com.sparta.delivery.cart.dto.cartsave;
 
-import com.sparta.delivery.menu.entity.Menu;
+
 import lombok.Getter;
 
 import java.util.List;
