@@ -1,10 +1,13 @@
 package com.sparta.delivery.restaurant.entity;
 
 import com.sparta.delivery.restaurant.enums.RestaurantStatus;
+import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalTime;
 
+@Getter
 @Entity
 public class Restaurant {
     @Id

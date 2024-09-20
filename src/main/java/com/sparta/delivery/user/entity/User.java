@@ -4,8 +4,9 @@ import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.Getter;
 
-
+@Getter
 @Entity
 public class User {
     @Id
