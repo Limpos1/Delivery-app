@@ -4,11 +4,9 @@ import com.sparta.delivery.restaurant.enums.RestaurantStatus;
 import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalTime;
 
-@Setter
 @Getter
 @Entity
 public class Restaurant {
@@ -16,13 +14,13 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "store_name", nullable = false, length = 50)
+    @Column(name = "store_name",nullable = false,length = 50)
     private String name; // 가게 이름
 
-    @Column(name = "min_order_price", nullable = false)
+    @Column(name = "min_order_price",nullable = false)
     private Long minOrderAmount; // 최소 주문 금액
 
-    @Column(name = "openedAt", nullable = false)
+    @Column(name = "openedAt",nullable = false)
     private LocalTime openTime; // 오픈 시간
 
     @Column(name = "closedAt", nullable = false)
@@ -34,6 +32,4 @@ public class Restaurant {
 
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status = RestaurantStatus.OPEN; // 가게 상태 (OPEN, CLOSED)
-
-
 }

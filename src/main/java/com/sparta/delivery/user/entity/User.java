@@ -5,9 +5,7 @@ import com.sparta.delivery.user.enums.UserStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
-import lombok.Setter;
 
-@Setter
 @Getter
 @Entity
 public class User {
@@ -29,6 +27,5 @@ public class User {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserStatus status;
-
 
 }
