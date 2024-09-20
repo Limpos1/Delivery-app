@@ -1,4 +1,5 @@
 package com.sparta.delivery.menu.entity;
+import com.sparta.delivery.cart.entity.Cart;
 import com.sparta.delivery.restorant.entity.Restaurant;
 import com.sparta.delivery.menu.enums.MenuStatus;
 import jakarta.persistence.*;

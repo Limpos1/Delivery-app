@@ -1,6 +1,7 @@
 package com.sparta.delivery.restorant.entity;
 
 import com.sparta.delivery.restorant.enums.RestaurantStatus;
+import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
 
 import java.time.LocalTime;

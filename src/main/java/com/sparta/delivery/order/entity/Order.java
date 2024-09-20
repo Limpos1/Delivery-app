@@ -1,6 +1,7 @@
 package com.sparta.delivery.order.entity;
 
 import com.sparta.delivery.order.enums.OrderStatus;
+import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
