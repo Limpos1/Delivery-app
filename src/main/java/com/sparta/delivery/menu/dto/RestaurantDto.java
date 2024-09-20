@@ -7,8 +7,8 @@ public class RestaurantDto {
     private Long storeId; //식당아이디
 
     //생성자
-//    public RestaurantDto (Long storeId) {
-//        this.storeId = storeId;
-//    }
+    public RestaurantDto (Long storeId) {
+        this.storeId = storeId;
+    }
 
 }
