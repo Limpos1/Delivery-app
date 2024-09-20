@@ -7,7 +7,6 @@ import com.sparta.delivery.cart.dto.cartsave.CartSaveResponseDto;
 import com.sparta.delivery.cart.dto.cartupdate.CartUpdateResponseDto;
 import com.sparta.delivery.cart.dto.cartviewall.CartViewAllResponseDto;
 import com.sparta.delivery.cart.entity.Cart;
-import com.sparta.delivery.cart.entity.CartItem;
 import com.sparta.delivery.cart.repository.CartRepository;
 import com.sparta.delivery.cart.util.CartOtherRestaurantUtil;
 import com.sparta.delivery.cart.util.CartScheduleUtil;
@@ -15,7 +14,6 @@ import com.sparta.delivery.cart.util.CartStreamUtil;
 import com.sparta.delivery.cart.util.FindRestaurantUtil;
 import com.sparta.delivery.menu.entity.Menus;
 import com.sparta.delivery.menu.repository.MenuRepository;
-import com.sparta.delivery.restaurant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -55,8 +50,10 @@ public class CartService {
         CartScheduleUtil.timeClearCart(cartRepository);
 
         List<Menus> menus = FindRestaurantUtil.findRestuarant(cartSaveRequestDto.getMenuId(), menuRepository);
+
         Menus firstMenu = menus.get(0);
         Long restaurantId = firstMenu.getRestaurant().getId();
+
         CartOtherRestaurantUtil.otherRestaurant(cart, restaurantId);
 
         /* menuRepository에서 menuId를 찾아서 맞는지 확인하고 맞으면 Cart에 추가하고 수량 증가)*/

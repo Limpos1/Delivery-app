@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @Slf4j
-@NoArgsConstructor
 public class FindRestaurantUtil {
 
     public static List<Menus> findRestuarant(List<Long> menuIds, MenuRepository menuRepository) {
