@@ -1,12 +1,17 @@
 package com.sparta.delivery.order.entity;
 
 import com.sparta.delivery.order.enums.OrderStatus;
+import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
-public class Order {
+@Getter
+@Setter
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,4 +34,16 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태
+
+    public Orders(User userId, String address, String name, LocalDateTime orderTime, OrderStatus status) {
+        this.userId=userId;
+        this.address = address;
+        this.name = name;
+        this.orderTime = orderTime;
+        this.status = status;
+    }
+
+    public Orders() {
+
+    }
 }
