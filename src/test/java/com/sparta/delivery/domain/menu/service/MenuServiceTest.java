@@ -21,6 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -109,18 +110,18 @@ public class MenuServiceTest {
     }
 
     @Test
-    public void menu_삭제_성공(){
+    public void menu_수정_실패_메뉴없음(){
 
         //given
         Long menuId=1L;
         MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L,menuId,"Updated Menu",20000, new RestaurantDto(2L));
 
-        //메뉴가 없을 때를 가정(mock)
-        //given(menuRepository.findById(menuId)).willReturn(Optional.empty());
+        //메뉴가 없을 때를 가정(mock?stubbing?)
+        lenient().when(menuRepository.findById(menuId)).thenReturn(Optional.empty());
 
 
         //when & then
-        assertThrows(RuntimeException.class, ()->{
+        assertThrows(IllegalArgumentException.class, ()->{
             menuService.updateMenu(menuId, menuUpdateRequestDto);
         });
 
