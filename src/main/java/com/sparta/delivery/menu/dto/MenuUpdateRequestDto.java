@@ -10,4 +10,11 @@ public class MenuUpdateRequestDto {
     private int price; //수정할 메뉴 가격
     private RestaurantDto restaurantDto; //레스토랑 id
 
+    public MenuUpdateRequestDto(Long userId, Long menuId, String status, int price, RestaurantDto restaurantDto) {
+        this.userId = userId;
+        this.menuId = menuId;
+        this.name = status;
+        this.price = price;
+        this.restaurantDto = restaurantDto;
+    }
 }
