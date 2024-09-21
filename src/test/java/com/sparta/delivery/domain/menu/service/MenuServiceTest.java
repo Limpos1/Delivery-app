@@ -1,7 +1,6 @@
 package com.sparta.delivery.domain.menu.service;
 
-import com.sparta.delivery.menu.dto.MenuSaveRequestDto;
-import com.sparta.delivery.menu.dto.MenuSaveResponseDto;
+import com.sparta.delivery.menu.dto.*;
 import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.menu.enums.MenuStatus;
 import com.sparta.delivery.menu.repository.MenuRepository;
@@ -19,8 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
@@ -45,7 +43,6 @@ public class MenuServiceTest {
 
         //System.out.println(menuSaveRequestDto.getUserId());
 
-
            //사장님 역할 설정
         User user = new User();
         user.setId(userId);
@@ -65,12 +62,67 @@ public class MenuServiceTest {
 
         //when
         MenuSaveResponseDto result = menuService.saveMenu(menuSaveRequestDto);
+
         //then
         assertNotNull(result);
         assertEquals("chicken",result.getName());
         assertEquals(20000,result.getPrice());
         assertEquals(restaurantId,result.getRestaurantDto().getStoreId());
 
+
+    }
+
+    @Test
+    public void menu_수정_성공(){
+        //given
+        Long userId = 1L;
+        Long menuId = 1L;
+        Long restaurantId = 3L;
+
+//      //user랑 restaurant mock
+        User user = new User();
+        user.setId(userId);
+        user.setRole(UserRole.OWNER);
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(restaurantId);
+        restaurant.setOwnerId(user);
+
+        //기존메뉴(old)정보
+        Menu existMenu = new Menu("Old",15000,restaurant,MenuStatus.AVAILABLE);
+
+        //수정요청 dto
+        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L, 1L, "New", 18000, new RestaurantDto(3L));
+
+        given(menuRepository.findById(menuId)).willReturn(Optional.of(existMenu));
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
+
+        given(menuRepository.save(any(Menu.class))).willReturn(existMenu);
+        //when
+        MenuUpdateResponseDto result = menuService.updateMenu(menuId,menuUpdateRequestDto);
+
+        //then
+        assertNotNull(result);
+        assertEquals("New",result.getName());
+        assertEquals(18000,result.getPrice());
+    }
+
+    @Test
+    public void menu_삭제_성공(){
+
+        //given
+        Long menuId=1L;
+        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L,menuId,"Updated Menu",20000, new RestaurantDto(2L));
+
+        //메뉴가 없을 때를 가정(mock)
+        //given(menuRepository.findById(menuId)).willReturn(Optional.empty());
+
+
+        //when & then
+        assertThrows(RuntimeException.class, ()->{
+            menuService.updateMenu(menuId, menuUpdateRequestDto);
+        });
 
     }
 
