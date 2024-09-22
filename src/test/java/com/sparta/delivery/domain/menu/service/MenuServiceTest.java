@@ -21,8 +21,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MenuServiceTest {
@@ -124,6 +123,39 @@ public class MenuServiceTest {
         assertThrows(IllegalArgumentException.class, ()->{
             menuService.updateMenu(menuId, menuUpdateRequestDto);
         });
+
+    }
+
+    @Test void 메뉴_삭제_성공(){
+        //given
+        Long menuId = 1L;
+        Long userId=1L;
+        Long restaurantId=2L;
+
+        MenuDeleteRequestDto menuDeleteRequestDto = new MenuDeleteRequestDto(userId, new RestaurantDto(restaurantId));
+
+        User user = new User();
+        user.setId(userId);
+        user.setRole(UserRole.OWNER);
+
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(restaurantId);
+        restaurant.setOwnerId(user);
+
+        Menu menu = new Menu("Sample Menu",10000,restaurant,MenuStatus.AVAILABLE);
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(menuRepository.findById(menuId)).willReturn(Optional.of(menu));
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
+
+        //when
+        menuService.deleteMenu(menuId,menuDeleteRequestDto);
+
+        //then
+
+        verify(menuRepository).save(any(Menu.class));
+        assertEquals(MenuStatus.DELETED,menu.getStatus());
+
 
     }
 
