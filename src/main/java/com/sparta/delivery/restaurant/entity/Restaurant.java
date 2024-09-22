@@ -35,6 +35,7 @@ public class Restaurant {
 
     protected Restaurant () {}
 
+    // 가게 생성, 수정
     public Restaurant(String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, User owner) {
         // 최소 주문 금액 : 10,000 이상
         if (minOrderAmount < 10000) {

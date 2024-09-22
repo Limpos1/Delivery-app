@@ -11,6 +11,8 @@ import com.sparta.delivery.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class RestaurantService {
 
@@ -51,6 +53,11 @@ public class RestaurantService {
         return new RestaurantResponseDto(restaurant);
     }
 
+    // 가게 조회, 다건 조회(메뉴 제외)
+//    @Transactional
+//    public List<RestaurantResponseDto> getRestaurantsbyName(String name) {
+//        List<Restaurant> restaurants = restaurantRepository.findBy
+//    }
 
 
     // 가게 폐업
