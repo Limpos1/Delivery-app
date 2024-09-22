@@ -4,9 +4,11 @@ import com.sparta.delivery.restaurant.enums.RestaurantStatus;
 import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalTime;
 
+@Setter
 @Getter
 @Entity
 public class Restaurant {
@@ -28,7 +30,7 @@ public class Restaurant {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
-    private User owner; // 가게 소유주 (사장님)
+    private User ownerId; // 가게 소유주 (사장님)
 
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status = RestaurantStatus.OPEN; // 가게 상태 (OPEN, CLOSED)
@@ -41,24 +43,3 @@ public class Restaurant {
         if (minOrderAmount < 10000) {
             throw new IllegalArgumentException("최소 주문 금액 10,000원 이상이어야 합니다.");
         }
-
-        // 오픈, 마감 시간
-        if (openTime.isAfter(closeTime)) {
-            throw new IllegalArgumentException("오픈 시간은 마감 시간보다 빨라야 합니다.");
-        }
-
-        this.name = name;
-        this.minOrderAmount = minOrderAmount;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.owner = owner;
-    }
-
-    // 가게 폐업
-    public void closeRestaurant() {
-        if (this.status == RestaurantStatus.CLOSED) {
-            throw new IllegalArgumentException("이미 폐업한 가게입니다.");
-        }
-        this.status = RestaurantStatus.CLOSED;
-    }
-}
