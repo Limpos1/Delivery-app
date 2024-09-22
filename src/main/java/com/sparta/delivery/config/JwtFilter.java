@@ -30,8 +30,9 @@ public class JwtFilter implements Filter {
 
         String url = httpRequest.getRequestURI();
 
+        // url.equals("/restaurants" 지우고 커밋할것!
         // 특정 URL & HTTP 메서드에 대해 필터를 건너뛰도록 설정
-        if (url.equals("/api/signup") || url.equals("/auth/login")) {
+        if (url.equals("/api/signup") || url.equals("/auth/login") || url.equals("/restaurants")) {
             chain.doFilter(request, response);
             return;
         }
