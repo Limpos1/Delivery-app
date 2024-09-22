@@ -1,7 +1,6 @@
 package com.sparta.delivery.order.dto;
 
 import com.sparta.delivery.order.enums.OrderStatus;
-import com.sparta.delivery.user.entity.User;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

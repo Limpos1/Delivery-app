@@ -3,7 +3,7 @@ package com.sparta.delivery;
 import com.sparta.delivery.order.dto.OrderDetailDto;
 import com.sparta.delivery.order.dto.OrderRequestDto;
 import com.sparta.delivery.order.dto.OrderResponseDto;
-import com.sparta.delivery.order.entity.CombineDto;
+import com.sparta.delivery.order.dto.CombineDto;
 import com.sparta.delivery.order.entity.OrderDetail;
 import com.sparta.delivery.order.entity.Orders;
 import com.sparta.delivery.order.enums.OrderStatus;
@@ -15,16 +15,13 @@ import com.sparta.delivery.restorant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,11 +74,11 @@ public class OrderTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(rest));
 
-        Orders mockOrder = new Orders(user, address, user.getName(), LocalDateTime.now(), OrderStatus.PENDING);
+        Orders mockOrder = new Orders(user, address, user.getName(), OrderStatus.PENDING);
         mockOrder.setId(1L);
         when(orderRepository.save(any(Orders.class))).thenReturn(mockOrder);
 
-        OrderDetail mockOrderDetail = new OrderDetail(mockOrder, menuId, restaurantId, 1L, requestDto.getPrice());
+        OrderDetail mockOrderDetail = new OrderDetail(mockOrder, menuId, restaurantId, 1L, requestDto.getPrice(),LocalDateTime.now());
         when(orderDetailRepository.save(any(OrderDetail.class))).thenReturn(mockOrderDetail);
 
         Long orderId = mockOrderDetail.getOrdersId().getId();
@@ -137,7 +134,7 @@ public class OrderTest {
         mockOrder.setUserId(user);
         mockOrder.setAddress("123 Main St");
         mockOrder.setName("John Doe");
-        mockOrder.setOrderTime(LocalDateTime.of(2023, 9, 19, 14, 0));
+
         mockOrder.setStatus(OrderStatus.ACCEPTED);
 
         OrderDetail mockOrderDetail = new OrderDetail();
@@ -146,6 +143,7 @@ public class OrderTest {
         mockOrderDetail.setRestaurantId(3L);
         mockOrderDetail.setCount(1L);
         mockOrderDetail.setPrice(15000L);
+        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 9, 19, 14, 0));
 
         // Mocking repositories
         when(orderRepository.findById(1L)).thenReturn(Optional.of(mockOrder));

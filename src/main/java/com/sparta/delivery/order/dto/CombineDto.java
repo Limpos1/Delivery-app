@@ -1,7 +1,5 @@
-package com.sparta.delivery.order.entity;
+package com.sparta.delivery.order.dto;
 
-import com.sparta.delivery.order.dto.OrderDetailDto;
-import com.sparta.delivery.order.dto.OrderResponseDto;
 import lombok.Getter;
 import lombok.Setter;
 

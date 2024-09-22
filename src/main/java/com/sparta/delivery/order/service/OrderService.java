@@ -3,7 +3,7 @@ package com.sparta.delivery.order.service;
 import com.sparta.delivery.order.dto.OrderDetailDto;
 import com.sparta.delivery.order.dto.OrderRequestDto;
 import com.sparta.delivery.order.dto.OrderResponseDto;
-import com.sparta.delivery.order.entity.CombineDto;
+import com.sparta.delivery.order.dto.CombineDto;
 import com.sparta.delivery.order.entity.OrderDetail;
 import com.sparta.delivery.order.entity.Orders;
 import com.sparta.delivery.order.enums.OrderStatus;
@@ -12,7 +12,6 @@ import com.sparta.delivery.order.repository.OrderRepository;
 import com.sparta.delivery.restorant.entity.Restaurant;
 import com.sparta.delivery.restorant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
-import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -68,8 +67,8 @@ public class OrderService {
         Long count = 1L; //지금은 1개의 메뉴만 가능하기 때문에 메뉴의 개수는 1개로 고정
 
 
-        Orders orders = new Orders(user, address, name, ordertime,orderstatus);
-        OrderDetail orderdetail = new OrderDetail(orders, menuid,restaurantid,count, price);
+        Orders orders = new Orders(user, address, name,orderstatus);
+        OrderDetail orderdetail = new OrderDetail(orders, menuid,restaurantid,count, price,ordertime);
         orderRepository.save(orders);
         orderDetailRepository.save(orderdetail);
 
@@ -78,7 +77,7 @@ public class OrderService {
         //orders Dto
         OrderResponseDto orderDto = new OrderResponseDto(userId, address, name, ordertime, orderstatus);
         //OrderDetail Dto
-        OrderDetailDto detailDto = new OrderDetailDto(orderid, menuid, restaurantid, count,price);
+        OrderDetailDto detailDto = new OrderDetailDto(orderid, menuid, restaurantid, count,price,ordertime);
 
 
         CombineDto resDto = new CombineDto(orderDto, detailDto);
@@ -88,7 +87,6 @@ public class OrderService {
     }
 
     public ResponseEntity<CombineDto> getOrder(long id) {
-        //주문자 id와 조회 요청을 하는 사람의 id가 같은지 확인하는 부분을 만들것인가?
 
         //주문을 찾아서 저장 없다면 예외처리
         Orders order = orderRepository.findById(id).orElse(null);
@@ -103,7 +101,7 @@ public class OrderService {
         Long userId = order.getUserId().getId();
         String address = order.getAddress();
         String name = order.getName();
-        LocalDateTime orderTime = order.getOrderTime();
+        LocalDateTime orderTime = orderDetail.getOrderTime();
         OrderStatus status = order.getStatus();
 
         //상세 정보를 Dto에 담기위한 과정
@@ -115,7 +113,7 @@ public class OrderService {
 
         // Dto에 데이터 저장
         OrderResponseDto orderDto = new OrderResponseDto(userId, address, name, orderTime,status);
-        OrderDetailDto detailDto = new OrderDetailDto(orderId, menuid, restaurantid, count, price);
+        OrderDetailDto detailDto = new OrderDetailDto(orderId, menuid, restaurantid, count, price,orderTime);
 
         CombineDto resDto = new CombineDto(orderDto,detailDto);
 
@@ -125,6 +123,8 @@ public class OrderService {
 
     public OrderStatus updateOrder(Long orderid, OrderStatus oEnum) {
         Orders order = orderRepository.findById(orderid).orElse(null);
+        OrderDetail orderDetail = orderDetailRepository.findByOrdersId(order);
+        LocalDateTime modifyNow = LocalDateTime.now();
         User user = order.getUserId();
         if(user.getRole()!=OWNER){
             throw new IllegalArgumentException("가게 사장님만 변경할 수 있습니다..");
@@ -136,6 +136,7 @@ public class OrderService {
             throw new IllegalArgumentException("User not found");
         }
         try{
+            orderDetail.setModifiedAt(modifyNow);
             order.setStatus(oEnum);
             orderRepository.save(order);
         }catch(Exception e){
