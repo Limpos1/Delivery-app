@@ -52,4 +52,12 @@ public class Restaurant {
         this.closeTime = closeTime;
         this.owner = owner;
     }
+
+    // 가게 폐업
+    public void closeRestaurant() {
+        if (this.status == RestaurantStatus.CLOSED) {
+            throw new IllegalArgumentException("이미 폐업한 가게입니다.");
+        }
+        this.status = RestaurantStatus.CLOSED;
+    }
 }

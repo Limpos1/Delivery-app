@@ -51,4 +51,15 @@ public class RestaurantService {
         return new RestaurantResponseDto(restaurant);
     }
 
+
+
+    // 가게 폐업
+    @Transactional
+    public RestaurantResponseDto closeRestaurant(Long restaurantId, Long ownerId) {
+        Restaurant restaurant = restaurantRepository.findByIdAndOwner_Id(restaurantId, ownerId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하기 않습니다."));
+
+        restaurant.closeRestaurant();
+        return new RestaurantResponseDto(restaurant);
+    }
 }
