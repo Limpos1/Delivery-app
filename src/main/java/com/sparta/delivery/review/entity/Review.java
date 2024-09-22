@@ -1,7 +1,7 @@
 package com.sparta.delivery.review.entity;
 
 import com.sparta.delivery.order.entity.Order;
-import com.sparta.delivery.restorant.entity.Restaurant;
+import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
 

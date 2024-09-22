@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +30,7 @@ public class Order {
     private LocalDateTime modifiedAt;
 
     @Enumerated(EnumType.STRING)
+    //추가
+    @Column(columnDefinition = "varchar(15)" )
     private OrderStatus status; // 주문 상태
 }
