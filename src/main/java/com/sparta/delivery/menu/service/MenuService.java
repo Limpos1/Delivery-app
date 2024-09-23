@@ -1,5 +1,7 @@
 package com.sparta.delivery.menu.service;
 
+
+import com.sparta.delivery.etc.common.SignUser;
 import com.sparta.delivery.menu.dto.*;
 import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.menu.enums.MenuStatus;
@@ -21,10 +23,10 @@ public class MenuService {
     private final RestaurantRepository restaurantRepository;
 
     //메뉴 생성
-    public MenuSaveResponseDto saveMenu(MenuSaveRequestDto menuSaveRequestDto) {
+    public MenuSaveResponseDto saveMenu(SignUser signUser, MenuSaveRequestDto menuSaveRequestDto) {
         //사용자 정보 확인
-        User user = userRepository.findById(menuSaveRequestDto.getUserId()).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
+        User user = userRepository.findById(signUser.getId()).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+//menuSaveRequestDto.getUserId()
         //사용자가 사장님인지 확인
         if (user.getRole() != UserRole.OWNER) {
             throw new IllegalArgumentException("메뉴등록 권한이 없습니다.");
@@ -55,11 +57,11 @@ public class MenuService {
     }
 
     //메뉴 수정
-    public MenuUpdateResponseDto updateMenu(Long menuId, MenuUpdateRequestDto menuUpdateRequestDto) {
+    public MenuUpdateResponseDto updateMenu(SignUser signUser, Long menuId, MenuUpdateRequestDto menuUpdateRequestDto) {
         //사용자 정보 확인
-        User user = userRepository.findById(menuUpdateRequestDto.getUserId())
+        User user = userRepository.findById(signUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
+//menuUpdateRequestDto.getUserId()
         //사장님인지 고객인지 분류
         if (user.getRole() != UserRole.OWNER) {
             throw new IllegalArgumentException("메뉴를 수정할 권한이 없습니다.");
@@ -95,11 +97,11 @@ public class MenuService {
     }
 
     //메뉴 삭제
-    public void deleteMenu(Long menuId, MenuDeleteRequestDto menuDeleteRequestDto) {
+    public void deleteMenu(SignUser signUser,Long menuId, MenuDeleteRequestDto menuDeleteRequestDto) {
         //사용자 정보 확인
-        User user = userRepository.findById(menuDeleteRequestDto.getUserId())
+        User user = userRepository.findById(signUser.getId())
                 .orElseThrow(()-> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-
+//menuDeleteRequestDto.getUserId()
         //사장님인지 확인
         if (user.getRole() != UserRole.OWNER){
             throw new IllegalArgumentException("메뉴를 삭제할 권한이 없습니다.");

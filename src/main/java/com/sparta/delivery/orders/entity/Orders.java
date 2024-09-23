@@ -31,23 +31,28 @@ public class Orders {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime orderTime; // 주문 시각
 
-    @Column(name="restaurant_id")
-    private Long restaurantId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    private Restaurant restaurant;
 
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태
 
-    public Orders(User userId, String address, String name,Long restaurantId,LocalDateTime orderTime, OrderStatus status) {
+    public Orders(User userId, String address, String name,Restaurant restaurant,LocalDateTime orderTime, OrderStatus status) {
         this.userId=userId;
         this.address = address;
         this.name = name;
-        this.restaurantId = restaurantId;
+        this.restaurant = restaurant;
         this.orderTime = orderTime;
         this.status = status;
     }
 
     public Orders() {
 
+    }
+
+    public boolean isCompleted() {
+        return status == OrderStatus.COMPLETED;
     }
 }

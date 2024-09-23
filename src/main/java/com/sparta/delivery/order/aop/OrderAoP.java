@@ -2,11 +2,10 @@ package com.sparta.delivery.order.aop;
 
 import com.sparta.delivery.order.dto.CombineDto;
 import com.sparta.delivery.order.dto.OrderDetailDto;
-import com.sparta.delivery.order.entity.OrderDetail;
-import com.sparta.delivery.order.entity.Orders;
-import com.sparta.delivery.order.enums.OrderStatus;
 import com.sparta.delivery.order.repository.OrderDetailRepository;
 import com.sparta.delivery.order.repository.OrderRepository;
+import com.sparta.delivery.orders.entity.OrderDetail;
+import com.sparta.delivery.orders.enums.OrderStatus;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;

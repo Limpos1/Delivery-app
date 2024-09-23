@@ -4,13 +4,14 @@ import com.sparta.delivery.order.dto.OrderDetailDto;
 import com.sparta.delivery.order.dto.OrderRequestDto;
 import com.sparta.delivery.order.dto.OrderResponseDto;
 import com.sparta.delivery.order.dto.CombineDto;
-import com.sparta.delivery.order.entity.OrderDetail;
-import com.sparta.delivery.order.entity.Orders;
-import com.sparta.delivery.order.enums.OrderStatus;
+
 import com.sparta.delivery.order.repository.OrderDetailRepository;
 import com.sparta.delivery.order.repository.OrderRepository;
 import com.sparta.delivery.order.service.OrderService;
-import com.sparta.delivery.restorant.entity.Restaurant;
+import com.sparta.delivery.orders.entity.OrderDetail;
+import com.sparta.delivery.orders.entity.Orders;
+import com.sparta.delivery.orders.enums.OrderStatus;
+import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.restorant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.enums.UserRole;
@@ -74,7 +75,7 @@ public class OrderTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(rest));
 
-        Orders mockOrder = new Orders(user, address, user.getName(),rest.getId(),LocalDateTime.now(), OrderStatus.PENDING);
+        Orders mockOrder = new Orders(user, address, user.getName(),rest,LocalDateTime.now(), OrderStatus.PENDING);
         mockOrder.setId(1L);
         when(orderRepository.save(any(Orders.class))).thenReturn(mockOrder);
 

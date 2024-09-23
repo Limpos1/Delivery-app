@@ -4,12 +4,12 @@ import com.sparta.delivery.order.dto.OrderDetailDto;
 import com.sparta.delivery.order.dto.OrderRequestDto;
 import com.sparta.delivery.order.dto.OrderResponseDto;
 import com.sparta.delivery.order.dto.CombineDto;
-import com.sparta.delivery.order.entity.OrderDetail;
-import com.sparta.delivery.order.entity.Orders;
-import com.sparta.delivery.order.enums.OrderStatus;
 import com.sparta.delivery.order.repository.OrderDetailRepository;
 import com.sparta.delivery.order.repository.OrderRepository;
-import com.sparta.delivery.restorant.entity.Restaurant;
+import com.sparta.delivery.orders.entity.OrderDetail;
+import com.sparta.delivery.orders.entity.Orders;
+import com.sparta.delivery.orders.enums.OrderStatus;
+import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.restorant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.repository.UserRepository;
@@ -19,13 +19,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.sparta.delivery.order.enums.OrderStatus.PENDING;
+import static com.sparta.delivery.orders.enums.OrderStatus.PENDING;
 import static com.sparta.delivery.user.enums.UserRole.OWNER;
 
 @Service
 public class OrderService {
+
 
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
@@ -41,7 +42,9 @@ public class OrderService {
     public ResponseEntity<CombineDto> orderrequest(Long userId, OrderRequestDto req) {
         LocalDateTime ordertime = LocalDateTime.now();
         User user = userRepository.findById(userId).orElse(null);
-        Restaurant rest = restaurantRepository.findById(req.getRestaurantId()).orElse(null);
+        Restaurant rest = restaurantRepository.findById(req.getRestaurantId()).orElseThrow(()->new IllegalArgumentException("등록된 식당이 없습니다."));
+
+
         LocalDateTime openTime = rest.getOpenTime();
         LocalDateTime closeTime = rest.getCloseTime();
         if(rest==null){
@@ -67,7 +70,7 @@ public class OrderService {
         Long count = 1L; //지금은 1개의 메뉴만 가능하기 때문에 메뉴의 개수는 1개로 고정
 
 
-        Orders orders = new Orders(user, address, name,restaurantid,ordertime, orderstatus);
+        Orders orders = new Orders(user, address, name,rest,ordertime, orderstatus);
         OrderDetail orderdetail = new OrderDetail(orders, menuid,restaurantid,count, price,ordertime);
         orderRepository.save(orders);
         orderDetailRepository.save(orderdetail);
