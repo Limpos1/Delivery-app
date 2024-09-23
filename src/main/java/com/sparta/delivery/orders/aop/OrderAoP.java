@@ -1,9 +1,9 @@
-package com.sparta.delivery.order.aop;
+package com.sparta.delivery.orders.aop;
 
-import com.sparta.delivery.order.dto.CombineDto;
-import com.sparta.delivery.order.dto.OrderDetailDto;
-import com.sparta.delivery.order.repository.OrderDetailRepository;
-import com.sparta.delivery.order.repository.OrderRepository;
+import com.sparta.delivery.orders.dto.CombineDto;
+import com.sparta.delivery.orders.dto.OrderDetailDto;
+import com.sparta.delivery.orders.repository.OrderDetailRepository;
+import com.sparta.delivery.orders.repository.OrderRepository;
 import com.sparta.delivery.orders.entity.OrderDetail;
 import com.sparta.delivery.orders.enums.OrderStatus;
 import org.aspectj.lang.JoinPoint;
@@ -28,11 +28,11 @@ public class OrderAoP {
     OrderRepository orderRepository;
 
     // 주문 생성 메서드를 위한 Pointcut
-    @Pointcut("execution(* com.sparta.delivery.order.service.OrderService.orderrequest(..))")
+    @Pointcut("execution(* com.sparta.delivery.orders.service.OrderService.orderrequest(..))")
     public void orderRequestPointcut() {}
 
     // 주문 상태 업데이트 메서드를 위한 Pointcut
-    @Pointcut("execution(* com.sparta.delivery.order.service.OrderService.updateOrder(Long, Long, com.sparta.delivery.order.enums.OrderStatus)) && args(userId, orderId, oEnum)")
+    @Pointcut("execution(* com.sparta.delivery.orders.service.OrderService.updateOrder(Long, Long, com.sparta.delivery.order.enums.OrderStatus)) && args(userId, orderId, oEnum)")
     public void updateOrderPointcut(Long userId, Long orderId, OrderStatus oEnum) {}
 
     // 주문 생성 시 로그 남기기

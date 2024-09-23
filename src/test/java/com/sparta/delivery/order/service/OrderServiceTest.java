@@ -1,35 +1,36 @@
-package com.sparta.delivery;
+package com.sparta.delivery.order.service;
 
-import com.sparta.delivery.order.dto.OrderDetailDto;
-import com.sparta.delivery.order.dto.OrderRequestDto;
-import com.sparta.delivery.order.dto.OrderResponseDto;
-import com.sparta.delivery.order.dto.CombineDto;
-
-import com.sparta.delivery.order.repository.OrderDetailRepository;
-import com.sparta.delivery.order.repository.OrderRepository;
-import com.sparta.delivery.order.service.OrderService;
+import com.sparta.delivery.orders.dto.CombineDto;
+import com.sparta.delivery.orders.dto.OrderDetailDto;
+import com.sparta.delivery.orders.dto.OrderRequestDto;
+import com.sparta.delivery.orders.dto.OrderResponseDto;
+import com.sparta.delivery.orders.repository.OrderDetailRepository;
+import com.sparta.delivery.orders.repository.OrderRepository;
 import com.sparta.delivery.orders.entity.OrderDetail;
 import com.sparta.delivery.orders.entity.Orders;
 import com.sparta.delivery.orders.enums.OrderStatus;
+import com.sparta.delivery.orders.service.OrderService;
 import com.sparta.delivery.restaurant.entity.Restaurant;
-import com.sparta.delivery.restorant.repository.RestaurantRepository;
+import com.sparta.delivery.restaurant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-public class OrderTest {
+@ExtendWith(MockitoExtension.class)
+public class OrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
     @Mock
@@ -38,7 +39,6 @@ public class OrderTest {
     private UserRepository userRepository;
     @Mock
     private RestaurantRepository restaurantRepository;
-
     @InjectMocks
     private OrderService orderService;
 
@@ -69,7 +69,7 @@ public class OrderTest {
         rest.setOpenTime(LocalDateTime.of(2024, 9,23,12,30));
         rest.setCloseTime(LocalDateTime.of(2024,9,24,5,30));
         restaurantRepository.save(rest);
-        
+
 
         OrderRequestDto requestDto = new OrderRequestDto(restaurantId, menuId, address, 15000L);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -145,7 +145,7 @@ public class OrderTest {
         mockOrderDetail.setRestaurantId(3L);
         mockOrderDetail.setCount(1L);
         mockOrderDetail.setPrice(15000L);
-        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 3, 19, 14, 0));
+        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 9, 19, 14, 0));
 
         // Mocking repositories
         when(orderRepository.findById(1L)).thenReturn(Optional.of(mockOrder));

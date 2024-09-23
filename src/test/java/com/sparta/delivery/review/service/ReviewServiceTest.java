@@ -1,7 +1,6 @@
 package com.sparta.delivery.review.service;
 
 import com.sparta.delivery.orders.entity.Orders;
-import com.sparta.delivery.orders.repository.OrderRepository;
 import com.sparta.delivery.review.dto.reviewsave.ReviewSaveRequestDto;
 import com.sparta.delivery.review.dto.reviewsave.ReviewSaveResponseDto;
 import com.sparta.delivery.review.entity.Review;

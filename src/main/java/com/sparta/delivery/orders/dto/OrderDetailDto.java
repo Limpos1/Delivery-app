@@ -1,6 +1,5 @@
-package com.sparta.delivery.order.dto;
+package com.sparta.delivery.orders.dto;
 
-import com.sparta.delivery.order.entity.Orders;
 import lombok.Getter;
 import org.springframework.cglib.core.Local;
 

@@ -1,4 +1,4 @@
-package com.sparta.delivery.order.dto;
+package com.sparta.delivery.orders.dto;
 
 import lombok.Getter;
 import lombok.Setter;
