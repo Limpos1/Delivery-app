@@ -144,7 +144,7 @@ public class OrderTest {
         mockOrderDetail.setRestaurantId(3L);
         mockOrderDetail.setCount(1L);
         mockOrderDetail.setPrice(15000L);
-        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 9, 19, 14, 0));
+        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 3, 19, 14, 0));
 
         // Mocking repositories
         when(orderRepository.findById(1L)).thenReturn(Optional.of(mockOrder));
@@ -199,7 +199,7 @@ public class OrderTest {
         mockOrderDetail.setRestaurantId(3L);
         mockOrderDetail.setCount(1L);
         mockOrderDetail.setPrice(15000L);
-        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 9, 19, 14, 0));
+        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 3, 19, 14, 0));
 
         // Mocking repositories
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
