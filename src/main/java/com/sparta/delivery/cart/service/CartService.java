@@ -12,7 +12,7 @@ import com.sparta.delivery.cart.util.CartOtherRestaurantUtil;
 import com.sparta.delivery.cart.util.CartScheduleUtil;
 import com.sparta.delivery.cart.util.CartStreamUtil;
 import com.sparta.delivery.cart.util.FindRestaurantUtil;
-import com.sparta.delivery.menu.entity.Menus;
+import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.menu.repository.MenuRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.repository.UserRepository;
@@ -49,16 +49,16 @@ public class CartService {
 
         CartScheduleUtil.timeClearCart(cartRepository);
 
-        List<Menus> menus = FindRestaurantUtil.findRestuarant(cartSaveRequestDto.getMenuId(), menuRepository);
+        List<Menu> menus = FindRestaurantUtil.findRestuarant(cartSaveRequestDto.getMenuId(), menuRepository);
 
-        Menus firstMenu = menus.get(0);
+        Menu firstMenu = menus.get(0);
         Long restaurantId = firstMenu.getRestaurant().getId();
 
         CartOtherRestaurantUtil.otherRestaurant(cart, restaurantId);
 
         /* menuRepository에서 menuId를 찾아서 맞는지 확인하고 맞으면 Cart에 추가하고 수량 증가)*/
         for (Long menuId : cartSaveRequestDto.getMenuId()) {
-            Menus menu = menuRepository.findById(menuId)
+            Menu menu = menuRepository.findById(menuId)
                     .orElseThrow(() -> {
                         log.error("메뉴를 찾을 수 없습니다.");
                         return new IllegalArgumentException("Menu not found");});
@@ -102,7 +102,7 @@ public class CartService {
         Cart cart = cartRepository.findByUser(user)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        Menus menu = menuRepository.findById(menuId)
+        Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new IllegalArgumentException("Menu Not Found"));
         //count가 0개면은 메뉴 삭제
         if (count <= 0) {

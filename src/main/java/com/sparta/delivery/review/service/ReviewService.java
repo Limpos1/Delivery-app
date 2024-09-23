@@ -8,7 +8,6 @@ import com.sparta.delivery.review.dto.reviewsave.ReviewSaveResponseDto;
 import com.sparta.delivery.review.entity.Review;
 import com.sparta.delivery.review.filter.ReviewFilter;
 import com.sparta.delivery.review.repository.ReviewReository;
-import com.sparta.delivery.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

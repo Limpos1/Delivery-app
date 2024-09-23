@@ -1,7 +1,7 @@
-package com.sparta.delivery.config;
+package com.sparta.delivery.etc.config;
 
-import com.sparta.delivery.annotation.Sign;
-import com.sparta.delivery.common.SignUser;
+import com.sparta.delivery.etc.annotation.Sign;
+import com.sparta.delivery.etc.common.SignUser;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
 import org.springframework.lang.Nullable;

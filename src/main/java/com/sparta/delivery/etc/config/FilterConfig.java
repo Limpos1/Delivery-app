@@ -1,4 +1,4 @@
-package com.sparta.delivery.config;
+package com.sparta.delivery.etc.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;

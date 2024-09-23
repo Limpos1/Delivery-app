@@ -1,6 +1,6 @@
-package com.sparta.delivery.exception;
+package com.sparta.delivery.etc.exception;
 
-import com.sparta.delivery.common.ApiResponse;
+import com.sparta.delivery.etc.common.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

@@ -1,4 +1,4 @@
-package com.sparta.delivery.config;
+package com.sparta.delivery.etc.config;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;

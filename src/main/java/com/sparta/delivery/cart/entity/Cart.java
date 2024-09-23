@@ -1,6 +1,6 @@
 package com.sparta.delivery.cart.entity;
 
-import com.sparta.delivery.menu.entity.Menus;
+import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,7 +33,7 @@ public class Cart {
         this.lastupdated = LocalDateTime.now();
     }
 
-    public void addOrUpdateMenu(Menus menu, Long count){
+    public void addOrUpdateMenu(Menu menu, Long count){
         CartItem viewCartItem = this.cartItems.stream()
                 .filter(cartItem -> cartItem.getMenu().equals(menu))
                 .findFirst()
@@ -49,7 +49,7 @@ public class Cart {
         this.lastupdated = LocalDateTime.now();
     }
 
-    public void removeMenu(Menus menu) {
+    public void removeMenu(Menu menu) {
         this.cartItems.removeIf(cartItem -> cartItem.getMenu().equals(menu));
         this.lastupdated = LocalDateTime.now();
     }

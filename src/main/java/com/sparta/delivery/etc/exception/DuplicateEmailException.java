@@ -1,4 +1,4 @@
-package com.sparta.delivery.exception;
+package com.sparta.delivery.etc.exception;
 
 public class DuplicateEmailException extends RuntimeException {
     public DuplicateEmailException() {

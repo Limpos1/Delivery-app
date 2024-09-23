@@ -1,4 +1,4 @@
-package com.sparta.delivery.auth.dto;
+package com.sparta.delivery.etc.auth.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

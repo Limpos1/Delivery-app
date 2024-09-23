@@ -1,7 +1,7 @@
 package com.sparta.delivery.cart.util;
 
 import com.sparta.delivery.cart.entity.Cart;
-import com.sparta.delivery.menu.entity.Menus;
+import com.sparta.delivery.menu.entity.Menu;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -9,7 +9,7 @@ public class CartOtherRestaurantUtil {
 
     public static void otherRestaurant(Cart cart, Long restaurantId) {
         if(!cart.getCartItems().isEmpty()){
-            Menus viewMenu = cart.getCartItems().get(0).getMenu();
+            Menu viewMenu = cart.getCartItems().get(0).getMenu();
             Long viewRestaurantId = viewMenu.getRestaurant().getId();
 
            if(!restaurantId.equals(viewRestaurantId)){

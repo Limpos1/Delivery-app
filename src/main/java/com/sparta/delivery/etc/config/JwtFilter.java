@@ -1,4 +1,4 @@
-package com.sparta.delivery.config;
+package com.sparta.delivery.etc.config;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterConfig;

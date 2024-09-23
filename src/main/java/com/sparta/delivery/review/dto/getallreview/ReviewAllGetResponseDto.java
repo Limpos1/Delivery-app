@@ -1,8 +1,5 @@
 package com.sparta.delivery.review.dto.getallreview;
 
-import com.sparta.delivery.orders.entity.Orders;
-import com.sparta.delivery.restaurant.entity.Restaurant;
-import com.sparta.delivery.user.entity.User;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

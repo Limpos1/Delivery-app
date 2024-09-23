@@ -1,4 +1,4 @@
-package com.sparta.delivery.common;
+package com.sparta.delivery.etc.common;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

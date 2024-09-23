@@ -1,7 +1,7 @@
-package com.sparta.delivery.auth.controller;
+package com.sparta.delivery.etc.auth.controller;
 
-import com.sparta.delivery.auth.dto.LoginRequestDto;
-import com.sparta.delivery.auth.service.AuthService;
+import com.sparta.delivery.etc.auth.dto.LoginRequestDto;
+import com.sparta.delivery.etc.auth.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
