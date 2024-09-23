@@ -39,8 +39,8 @@ public class ReviewService {
         return new ReviewSaveResponseDto(
                 savedReview.getId(),
                 order.getId(),
-                order.getUser().getId(),
-                order.getRestaurant().getId(),
+                order.getUserId().getId(),
+                order.getRestaurant(),
                 savedReview.getRating(),
                 savedReview.getComment(),
                 savedReview.getCreatedOn());
