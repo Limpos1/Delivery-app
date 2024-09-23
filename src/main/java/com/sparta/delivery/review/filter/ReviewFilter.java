@@ -14,9 +14,9 @@ public class ReviewFilter {
 
     private final ReviewReository reviewReository;
 
-    public List<Review> filterReviews(Long restaurantId, Integer maxRating, Integer minRating){
-        if(maxRating != null && minRating != null){
-            return reviewReository.findByRestaurantIdAndRatingBetween(restaurantId,maxRating,minRating);
+    public List<Review> filterReviews(Long restaurantId, Integer minRating, Integer maxRating){
+        if(minRating != null &&  maxRating!= null){
+            return reviewReository.findByRestaurantIdAndRatingBetween(restaurantId,minRating, maxRating);
         } else {
             return reviewReository.findByRestaurantId(restaurantId);
         }

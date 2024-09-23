@@ -1,7 +1,7 @@
 package com.sparta.delivery.restaurant.controller;
 
 
-import com.sparta.delivery.config.JwtUtil;
+import com.sparta.delivery.etc.config.JwtUtil;
 import com.sparta.delivery.restaurant.dto.RestaurantDetailResponseDto;
 import com.sparta.delivery.restaurant.dto.RestaurantRequestDto;
 import com.sparta.delivery.restaurant.dto.RestaurantResponseDto;

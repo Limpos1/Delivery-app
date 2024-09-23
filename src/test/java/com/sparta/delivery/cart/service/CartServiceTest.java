@@ -63,9 +63,9 @@ class CartServiceTest {
         restaurant = new Restaurant();
         ReflectionTestUtils.setField(restaurant, "id", 1L);  // 임시로 restaurantId를 1L로 설정
 
-
         menu1 = new Menu("메뉴 1", 10000, restaurant , MenuStatus.AVAILABLE);
         menu2 = new Menu("메뉴 2", 20000, restaurant , MenuStatus.AVAILABLE);
+
         cart = new Cart();
         cart.addOrUpdateMenu(menu1, 2L);
         cart.addOrUpdateMenu(menu2, 1L);
@@ -76,24 +76,32 @@ class CartServiceTest {
 
     @Test
     void saveCart() {
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));
-        when(menuRepository.findById(1L)).thenReturn(Optional.of(menu1));
-        when(menuRepository.findById(2L)).thenReturn(Optional.of(menu2));
-        when(cartRepository.save(any(Cart.class))).thenReturn(cart);
+        // 유저, 메뉴, 카트에 대한 Mock 설정
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+        when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));  // Optional<Cart> 반환
+        when(menuRepository.findAllByIdIn(anyList())).thenReturn(List.of(menu1, menu2));
+        when(menuRepository.findById(1L)).thenReturn(Optional.of(menu1));  // Optional<Menu> 반환
+        when(menuRepository.findById(2L)).thenReturn(Optional.of(menu2));  // Optional<Menu> 반환
+        when(cartRepository.save(any(Cart.class))).thenReturn(cart);  // 카트 저장 Mock 설정
 
+        // saveCart 메서드 호출
         CartSaveResponseDto response = cartService.saveCart(cartSaveRequestDto);
 
-        assertNotNull(response);
-        assertEquals(user.getId(), response.getUserId());
-        assertEquals(2, response.getMenus().size());
+        // 검증
+        assertNotNull(response);  // 응답이 null이 아님을 확인
+        assertEquals(user.getId(), response.getUserId());  // 유저 ID가 일치하는지 확인
+        assertEquals(2, response.getMenus().size());  // 메뉴의 개수가 2개인지 확인
 
+        // cartRepository의 save 메서드가 호출되었는지 확인
         verify(cartRepository).save(any(Cart.class));
     }
 
+
+
+
     @Test
     void getViewAllTest(){
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
         when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));
 
         CartViewAllResponseDto response = cartService.getViewAllCart(user.getId());
@@ -106,7 +114,7 @@ class CartServiceTest {
 
     @Test
     void updateCart(){
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
         when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));
         when(menuRepository.findById(1L)).thenReturn(Optional.of(menu1));
 
