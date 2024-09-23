@@ -4,6 +4,7 @@ import com.sparta.delivery.common.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -14,21 +15,25 @@ import java.util.Map;
 
 
 @RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateEmailException.class)
-    public ApiResponse<?> handleDuplicateEmailException(DuplicateEmailException e) {
-        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    public ResponseEntity<ApiResponse<?>> handleDuplicateEmailException(DuplicateEmailException e) {
+        ApiResponse<?> response = ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(WrongPasswordException.class)
-    public ApiResponse<?> handleWrongPasswordException(WrongPasswordException e) {
-        return ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+    public ResponseEntity<ApiResponse<?>> handleWrongPasswordException(WrongPasswordException e) {
+        ApiResponse<?> response =  ApiResponse.createError(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NoSignedUserException.class)
-    public ApiResponse<?> handleNoSignedUserException(NoSignedUserException e) {
-        return ApiResponse.createError(e.getMessage(), HttpStatus.NOT_FOUND.value());
+    public ResponseEntity<ApiResponse<?>> handleNoSignedUserException(NoSignedUserException e) {
+        ApiResponse<?> response = ApiResponse.createError(e.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -50,8 +55,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, status);
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<String> handleAllException(Exception e) {
-//        return new ResponseEntity<>("서버 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleAllException(Exception e) {
+        return new ResponseEntity<>("서버 에러 발생", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

@@ -1,6 +1,10 @@
 package com.sparta.delivery.user.entity;
 
+import com.sparta.delivery.cart.entity.Cart;
 import com.sparta.delivery.common.Timestamped;
+import com.sparta.delivery.order.entity.Order;
+import com.sparta.delivery.restorant.entity.Restaurant;
+import com.sparta.delivery.review.entity.Review;
 import com.sparta.delivery.user.dto.SignupRequestDto;
 import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.enums.UserStatus;
@@ -9,10 +13,15 @@ import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
 @NoArgsConstructor
+//SQL identifier 예약어관련 오류로 테이블 이름만 재지정
+@Table(name = "users")
 public class User extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +42,17 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
+    @OneToOne(mappedBy = "userId")
+    private Cart cart;
 
+    @OneToMany(mappedBy = "userId")
+    private List<Order> orderList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userId")
+    private List<Review> reviewList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ownerId")
+    private List<Restaurant> restaurantList = new ArrayList<>();
 
     public User(SignupRequestDto requestDto, String encodedPassword) {
         this.email = requestDto.getEmail();

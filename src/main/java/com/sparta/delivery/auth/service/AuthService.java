@@ -30,14 +30,15 @@ public class AuthService {
         }
 
         //탈퇴유저 로그인 방지
-        if(user.getStatus().equals(UserStatus.NON_WITHDRAWAL)) {
-            //존재하는 유저가 비밀번호를 알맞게 입력시 JWT토큰반환
-            return jwtUtil.createToken(
-                    user.getId(),
-                    user.getEmail()
-            );
+        if(user.getStatus() != UserStatus.NON_WITHDRAWAL) {
+            throw new NoSignedUserException();
         }
-        else throw new NoSignedUserException();
+
+        //정상유저라면 JWT 토큰 반환
+        return jwtUtil.createToken(
+                user.getId(),
+                user.getEmail()
+        );
     }
 }
 

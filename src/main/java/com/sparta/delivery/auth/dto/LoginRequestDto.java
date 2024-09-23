@@ -3,9 +3,11 @@ package com.sparta.delivery.auth.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class LoginRequestDto {
 
     @NotNull(message = "빈칸은 입력이 불가능합니다.")
