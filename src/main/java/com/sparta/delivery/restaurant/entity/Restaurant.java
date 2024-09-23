@@ -6,11 +6,13 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Setter
-@Getter
+
 @Entity
+@Getter
+@Setter
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +24,13 @@ public class Restaurant {
     @Column(name = "min_order_price",nullable = false)
     private Long minOrderAmount; // 최소 주문 금액
 
+    //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalDateTime으로 변경함.
     @Column(name = "openedAt",nullable = false)
-    private LocalTime openTime; // 오픈 시간
+    private LocalDateTime openTime; // 오픈 시간
 
+    //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalDateTime으로 변경함.
     @Column(name = "closedAt", nullable = false)
-    private LocalTime closeTime; // 마감 시간
+    private LocalDateTime closeTime; // 마감 시간
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)

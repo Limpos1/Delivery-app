@@ -1,8 +1,9 @@
 package com.sparta.delivery.user.service;
 
-import com.sparta.delivery.config.PasswordEncoder;
-import com.sparta.delivery.exception.DuplicateEmailException;
-import com.sparta.delivery.exception.WrongPasswordException;
+
+import com.sparta.delivery.etc.config.PasswordEncoder;
+import com.sparta.delivery.etc.exception.DuplicateEmailException;
+import com.sparta.delivery.etc.exception.WrongPasswordException;
 import com.sparta.delivery.user.dto.SignoutRequestDto;
 import com.sparta.delivery.user.dto.SignupRequestDto;
 import com.sparta.delivery.user.dto.SignupResponseDto;
