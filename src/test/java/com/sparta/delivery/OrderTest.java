@@ -74,7 +74,7 @@ public class OrderTest {
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(rest));
 
-        Orders mockOrder = new Orders(user, address, user.getName(), OrderStatus.PENDING);
+        Orders mockOrder = new Orders(user, address, user.getName(),rest.getId(),LocalDateTime.now(), OrderStatus.PENDING);
         mockOrder.setId(1L);
         when(orderRepository.save(any(Orders.class))).thenReturn(mockOrder);
 
@@ -83,7 +83,8 @@ public class OrderTest {
 
         Long orderId = mockOrderDetail.getOrdersId().getId();
 
-        ResponseEntity<CombineDto> response = orderService.orderrequest(requestDto);
+
+        ResponseEntity<CombineDto> response = orderService.orderrequest(userId,requestDto);
 
         // Then
         assertEquals(200, response.getStatusCodeValue());
@@ -186,6 +187,7 @@ public class OrderTest {
         User mockOwner = new User();
         mockOwner.setId(1L);
         mockOwner.setRole(UserRole.OWNER); // OWNER 권한 설정
+        Long userId = mockOwner.getId();
 
         Orders mockOrder = new Orders();
         mockOrder.setId(orderId);
@@ -195,7 +197,7 @@ public class OrderTest {
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
 
         // Act
-        OrderStatus updatedStatus = orderService.updateOrder(orderId, OrderStatus.COMPLETED);
+        OrderStatus updatedStatus = orderService.updateOrder(userId, orderId, OrderStatus.COMPLETED);
 
         // Assert
         assertEquals(OrderStatus.COMPLETED, updatedStatus);  // 상태가 올바르게 업데이트되는지 확인

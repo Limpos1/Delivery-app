@@ -23,18 +23,25 @@ public class Orders {
     @Column(nullable = false)
     private String address;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime orderTime; // 주문 시각
+
     @Column(nullable = false)
     private String name;
 
+    @Column(name="restaurant_id")
+    private Long restaurantId;
 
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태
 
-    public Orders(User userId, String address, String name, OrderStatus status) {
+    public Orders(User userId, String address, String name,Long restaurantId,LocalDateTime orderTime, OrderStatus status) {
         this.userId=userId;
         this.address = address;
         this.name = name;
+        this.restaurantId = restaurantId;
+        this.orderTime = orderTime;
         this.status = status;
     }
 
