@@ -59,5 +59,3 @@ public class Cart {
         this.lastupdated = LocalDateTime.now();
     }
 }
-
-
