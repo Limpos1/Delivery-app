@@ -7,7 +7,7 @@ import com.sparta.delivery.menu.enums.MenuStatus;
 import com.sparta.delivery.menu.repository.MenuRepository;
 import com.sparta.delivery.menu.service.MenuService;
 import com.sparta.delivery.restaurant.entity.Restaurant;
-import com.sparta.delivery.restaurant.restaurantRepository.RestaurantRepository;
+import com.sparta.delivery.restaurant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.repository.UserRepository;
