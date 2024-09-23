@@ -1,11 +1,11 @@
 package com.sparta.delivery.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.delivery.common.SignUser;
-import com.sparta.delivery.config.PasswordEncoder;
-import com.sparta.delivery.exception.DuplicateEmailException;
-import com.sparta.delivery.exception.GlobalExceptionHandler;
-import com.sparta.delivery.exception.WrongPasswordException;
+import com.sparta.delivery.etc.common.SignUser;
+import com.sparta.delivery.etc.config.PasswordEncoder;
+import com.sparta.delivery.etc.exception.DuplicateEmailException;
+import com.sparta.delivery.etc.exception.GlobalExceptionHandler;
+import com.sparta.delivery.etc.exception.WrongPasswordException;
 import com.sparta.delivery.user.dto.SignoutRequestDto;
 import com.sparta.delivery.user.dto.SignupRequestDto;
 import com.sparta.delivery.user.dto.SignupResponseDto;

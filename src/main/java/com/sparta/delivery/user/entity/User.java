@@ -44,7 +44,7 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @OneToOne(mappedBy = "userId")
+    @OneToOne(mappedBy = "user")
     private Cart cart;
 
     @OneToMany(mappedBy = "userId")

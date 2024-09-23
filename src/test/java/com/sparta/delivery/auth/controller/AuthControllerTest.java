@@ -1,10 +1,11 @@
 package com.sparta.delivery.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.delivery.auth.dto.LoginRequestDto;
-import com.sparta.delivery.auth.service.AuthService;
-import com.sparta.delivery.config.JwtUtil;
-import com.sparta.delivery.config.PasswordEncoder;
+import com.sparta.delivery.etc.auth.controller.AuthController;
+import com.sparta.delivery.etc.auth.dto.LoginRequestDto;
+import com.sparta.delivery.etc.auth.service.AuthService;
+import com.sparta.delivery.etc.config.JwtUtil;
+import com.sparta.delivery.etc.config.PasswordEncoder;
 import com.sparta.delivery.user.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

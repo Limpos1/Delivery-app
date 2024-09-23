@@ -1,10 +1,11 @@
 package com.sparta.delivery.auth.service;
 
-import com.sparta.delivery.auth.dto.LoginRequestDto;
-import com.sparta.delivery.config.JwtUtil;
-import com.sparta.delivery.config.PasswordEncoder;
-import com.sparta.delivery.exception.NoSignedUserException;
-import com.sparta.delivery.exception.WrongPasswordException;
+import com.sparta.delivery.etc.auth.dto.LoginRequestDto;
+import com.sparta.delivery.etc.auth.service.AuthService;
+import com.sparta.delivery.etc.config.JwtUtil;
+import com.sparta.delivery.etc.config.PasswordEncoder;
+import com.sparta.delivery.etc.exception.NoSignedUserException;
+import com.sparta.delivery.etc.exception.WrongPasswordException;
 import com.sparta.delivery.user.dto.SignupRequestDto;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.enums.UserRole;
