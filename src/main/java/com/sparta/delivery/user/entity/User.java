@@ -1,9 +1,9 @@
 package com.sparta.delivery.user.entity;
 
 import com.sparta.delivery.cart.entity.Cart;
-import com.sparta.delivery.common.Timestamped;
-import com.sparta.delivery.order.entity.Order;
-import com.sparta.delivery.restorant.entity.Restaurant;
+import com.sparta.delivery.etc.common.Timestamped;
+import com.sparta.delivery.orders.entity.Orders;
+import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.review.entity.Review;
 import com.sparta.delivery.user.dto.SignupRequestDto;
 import com.sparta.delivery.user.enums.UserRole;
@@ -12,11 +12,13 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+@Setter
 @Entity
 @Getter
 @NoArgsConstructor
@@ -46,7 +48,7 @@ public class User extends Timestamped {
     private Cart cart;
 
     @OneToMany(mappedBy = "userId")
-    private List<Order> orderList = new ArrayList<>();
+    private List<Orders> orderList = new ArrayList<>();
 
     @OneToMany(mappedBy = "userId")
     private List<Review> reviewList = new ArrayList<>();
