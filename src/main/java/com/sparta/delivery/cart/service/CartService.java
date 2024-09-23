@@ -11,7 +11,6 @@ import com.sparta.delivery.cart.repository.CartRepository;
 import com.sparta.delivery.cart.util.CartOtherRestaurantUtil;
 import com.sparta.delivery.cart.util.CartScheduleUtil;
 import com.sparta.delivery.cart.util.CartStreamUtil;
-import com.sparta.delivery.cart.util.FindRestaurantUtil;
 import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.menu.repository.MenuRepository;
 import com.sparta.delivery.user.entity.User;
@@ -49,7 +48,7 @@ public class CartService {
 
         CartScheduleUtil.timeClearCart(cartRepository);
 
-        List<Menu> menus = FindRestaurantUtil.findRestuarant(cartSaveRequestDto.getMenuId(), menuRepository);
+        List<Menu> menus = menuRepository.findAllByIdIn(cartSaveRequestDto.getMenuId());
 
         Menu firstMenu = menus.get(0);
         Long restaurantId = firstMenu.getRestaurant().getId();
