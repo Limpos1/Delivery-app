@@ -1,5 +1,6 @@
 package com.sparta.delivery.restaurant.repository;
 
+import com.sparta.delivery.cart.entity.Cart;
 import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.restaurant.enums.RestaurantStatus;
 import com.sparta.delivery.user.entity.User;
