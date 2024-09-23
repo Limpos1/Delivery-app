@@ -38,9 +38,9 @@ public class RestaurantController {
 
     /*
     가게 생성
-    name, minOrderAmount, openTime, closeTime, status
+    id, name, minOrderAmount, openTime, closeTime, status
      */
-    @PostMapping("/{restaurantId}")
+    @PostMapping
     public ResponseEntity<RestaurantResponseDto> createRestaurant(
             @Valid @RequestBody RestaurantRequestDto restaurantRequestDto,
             HttpServletRequest request) {

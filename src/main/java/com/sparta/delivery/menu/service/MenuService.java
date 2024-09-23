@@ -8,7 +8,7 @@ import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.restaurant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.enums.UserRole;
-import com.sparta.delivery.user.userRepository.UserRepository;
+import com.sparta.delivery.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -45,7 +45,7 @@ public class RestaurantService {
         }
 
         // 사장님은는 최대 3개의 가게만 운영할 수 있다
-        if (restaurantRepository.countByOwnerId(userId) >= 3) {
+        if (restaurantRepository.countByOwnerId(user) >= 3) {
             throw new IllegalArgumentException("최대 3개의 가게만 운영할 수 있습니다.");
         }
 
@@ -64,7 +64,7 @@ public class RestaurantService {
      // 가게 조회, 다건 조회(메뉴 제외)
     @Transactional
     public List<RestaurantResponseDto> getRestaurantsbyName(String name) {
-        List<Restaurant> restaurants = restaurantRepository.findOpenRestaurantByName(name, RestaurantStatus.OPEN);
+        List<Restaurant> restaurants = restaurantRepository.findByNameContainingAndStatus(name, RestaurantStatus.OPEN);
         return restaurants.stream()
                 .map(RestaurantResponseDto::new)
                 .collect(Collectors.toList());
@@ -87,10 +87,12 @@ public class RestaurantService {
     // 가게 폐업
     @Transactional
     public RestaurantResponseDto closeRestaurant(Long restaurantId, Long ownerId) {
+        // ownerId로 User 찾기
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
-        Restaurant restaurant = restaurantRepository.findByIdAndOwner_Id(restaurantId, ownerId)
+        // restaurantId와 ownerId로 가게 찾기
+        Restaurant restaurant = restaurantRepository.findByIdAndOwnerId(restaurantId, owner)
                 .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하기 않습니다."));
 
         restaurant.closeRestaurant();
