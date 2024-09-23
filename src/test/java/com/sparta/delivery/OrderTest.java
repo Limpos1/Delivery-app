@@ -65,12 +65,12 @@ public class OrderTest {
 
         //오후에 열고 새벽에 닫으면 오류가 발생.
         //날짜가 필요함, 따라서 LocalTime을 LocalDateTime으로 변경함.
-        rest.setOpenTime(LocalDateTime.of(2024, 9,21,12,30));
-        rest.setCloseTime(LocalDateTime.of(2024,9,22,5,30));
+        rest.setOpenTime(LocalDateTime.of(2024, 9,23,12,30));
+        rest.setCloseTime(LocalDateTime.of(2024,9,24,5,30));
         restaurantRepository.save(rest);
         
 
-        OrderRequestDto requestDto = new OrderRequestDto(userId, restaurantId, menuId, address, 15000L);
+        OrderRequestDto requestDto = new OrderRequestDto(restaurantId, menuId, address, 15000L);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(rest));
 
@@ -193,8 +193,18 @@ public class OrderTest {
         mockOrder.setId(orderId);
         mockOrder.setUserId(mockOwner);  // 주문자는 OWNER 역할의 유저
 
+        OrderDetail mockOrderDetail = new OrderDetail();
+        mockOrderDetail.setOrdersId(mockOrder);
+        mockOrderDetail.setMenuId(2L);
+        mockOrderDetail.setRestaurantId(3L);
+        mockOrderDetail.setCount(1L);
+        mockOrderDetail.setPrice(15000L);
+        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 9, 19, 14, 0));
+
         // Mocking repositories
         when(orderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
+        when(userRepository.findById(mockOwner.getId())).thenReturn(Optional.of(mockOwner));
+        when(orderDetailRepository.findByOrdersId(mockOrder)).thenReturn(mockOrderDetail);
 
         // Act
         OrderStatus updatedStatus = orderService.updateOrder(userId, orderId, OrderStatus.COMPLETED);

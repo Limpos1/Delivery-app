@@ -135,13 +135,13 @@ public class OrderService {
         if(user==null){
             throw new IllegalArgumentException("User not found");
         }
-        try{
+      try{
             orderDetail.setModifiedAt(modifyNow);
             order.setStatus(oEnum);
             orderRepository.save(order);
-        }catch(Exception e){
+      }catch(Exception e){
             throw new IllegalArgumentException("잘못된 요청입니다.");
-        }
+      }
         return order.getStatus();
     }
 
