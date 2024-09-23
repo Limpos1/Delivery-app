@@ -16,13 +16,13 @@ public class Restaurant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "store_name",nullable = false,length = 50)
+    @Column(name = "store_name", nullable = false, length = 50)
     private String name; // 가게 이름
 
-    @Column(name = "min_order_price",nullable = false)
+    @Column(name = "min_order_price", nullable = false)
     private Long minOrderAmount; // 최소 주문 금액
 
-    @Column(name = "openedAt",nullable = false)
+    @Column(name = "openedAt", nullable = false)
     private LocalTime openTime; // 오픈 시간
 
     @Column(name = "closedAt", nullable = false)
@@ -35,7 +35,8 @@ public class Restaurant {
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status = RestaurantStatus.OPEN; // 가게 상태 (OPEN, CLOSED)
 
-    protected Restaurant () {}
+    protected Restaurant() {
+    }
 
     // 가게 생성, 수정
     public Restaurant(String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, User owner) {
@@ -43,3 +44,21 @@ public class Restaurant {
         if (minOrderAmount < 10000) {
             throw new IllegalArgumentException("최소 주문 금액 10,000원 이상이어야 합니다.");
         }
+
+        // 오픈, 마감 시간
+        if (openTime.isAfter(closeTime)) {
+            throw new IllegalArgumentException("오픈 시간은 마감 시간보다 빨라야 합니다.");
+        }
+
+        this.name = name;
+        this.minOrderAmount = minOrderAmount;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.ownerId = owner;
+    }
+
+    // 가게 폐업, 가게 상태를 CLOSED로 변경
+    public void closeRestaurant() {
+        this.status = RestaurantStatus.CLOSED;
+    }
+}

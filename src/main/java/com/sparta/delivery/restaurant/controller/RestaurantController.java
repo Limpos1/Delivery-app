@@ -2,15 +2,19 @@ package com.sparta.delivery.restaurant.controller;
 
 
 import com.sparta.delivery.config.JwtUtil;
+import com.sparta.delivery.restaurant.dto.RestaurantDetailResponseDto;
 import com.sparta.delivery.restaurant.dto.RestaurantRequestDto;
 import com.sparta.delivery.restaurant.dto.RestaurantResponseDto;
 import com.sparta.delivery.restaurant.service.RestaurantService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/restaurants") // 레스토랑 관련 API의 기본 경로
@@ -36,7 +40,7 @@ public class RestaurantController {
     가게 생성
     name, minOrderAmount, openTime, closeTime, status
      */
-    @PostMapping
+    @PostMapping("/{restaurantId}")
     public ResponseEntity<RestaurantResponseDto> createRestaurant(
             @Valid @RequestBody RestaurantRequestDto restaurantRequestDto,
             HttpServletRequest request) {
@@ -50,10 +54,25 @@ public class RestaurantController {
         }
     }
 
+    // 가게 목록 조회
+    @GetMapping
+    public ResponseEntity<List<RestaurantResponseDto>> getRestaurantsByName(
+            @RequestParam(required = false) String name) {
+        List<RestaurantResponseDto> restaurants = restaurantService.getRestaurantsbyName(name);
+        return ResponseEntity.ok(restaurants);
+    }
+
+    // 가게 단건 조회
+    @GetMapping("/{restaurantId}")
+    public ResponseEntity<RestaurantDetailResponseDto> getRestaurantById(
+            @PathVariable Long restaurantId) {
+        RestaurantDetailResponseDto restaurantDetail = restaurantService.getRestaurantById(restaurantId);
+        return ResponseEntity.ok(restaurantDetail);
+    }
 
     // 가게 폐업 시 상태만 폐업 상태로 변경
-    @PutMapping
-    public ResponseEntity<RestaurantResponseDto> closeREstaurant(
+    @PutMapping("/{restaurantId}/close")
+    public ResponseEntity<RestaurantResponseDto> closeRestaurant(
             @PathVariable Long restaurantId,
             HttpServletRequest request) {
         Long userId = getUserIdFromToken(request);
