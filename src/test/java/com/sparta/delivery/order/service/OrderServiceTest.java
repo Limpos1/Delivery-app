@@ -5,7 +5,7 @@ import com.sparta.delivery.orders.dto.OrderDetailDto;
 import com.sparta.delivery.orders.dto.OrderRequestDto;
 import com.sparta.delivery.orders.dto.OrderResponseDto;
 import com.sparta.delivery.orders.repository.OrderDetailRepository;
-import com.sparta.delivery.orders.repository.OrderRepository;
+import com.sparta.delivery.orders.repository.OrdersRepository;
 import com.sparta.delivery.orders.entity.OrderDetail;
 import com.sparta.delivery.orders.entity.Orders;
 import com.sparta.delivery.orders.enums.OrderStatus;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
     @Mock
-    private OrderRepository orderRepository;
+    private OrdersRepository ordersRepository;
     @Mock
     private OrderDetailRepository orderDetailRepository;
     @Mock
@@ -77,7 +77,7 @@ public class OrderServiceTest {
 
         Orders mockOrder = new Orders(user, address, user.getName(),rest,LocalDateTime.now(), OrderStatus.PENDING);
         mockOrder.setId(1L);
-        when(orderRepository.save(any(Orders.class))).thenReturn(mockOrder);
+        when(ordersRepository.save(any(Orders.class))).thenReturn(mockOrder);
 
         OrderDetail mockOrderDetail = new OrderDetail(mockOrder, menuId, restaurantId, 1L, requestDto.getPrice(),LocalDateTime.now());
         when(orderDetailRepository.save(any(OrderDetail.class))).thenReturn(mockOrderDetail);
@@ -119,7 +119,7 @@ public class OrderServiceTest {
 
         // Verify
         verify(userRepository, times(1)).findById(userId);
-        verify(orderRepository, times(1)).save(any(Orders.class));
+        verify(ordersRepository, times(1)).save(any(Orders.class));
         verify(orderDetailRepository, times(1)).save(any(OrderDetail.class));
 
     }
@@ -148,7 +148,7 @@ public class OrderServiceTest {
         mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 9, 19, 14, 0));
 
         // Mocking repositories
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(mockOrder));
+        when(ordersRepository.findById(1L)).thenReturn(Optional.of(mockOrder));
         when(orderDetailRepository.findByOrdersId(mockOrder)).thenReturn(mockOrderDetail);
 
         // Act
@@ -177,7 +177,7 @@ public class OrderServiceTest {
         assertEquals(1L, detailDto.getCount());
         assertEquals(15000L, detailDto.getPrice());
 
-        verify(orderRepository, times(1)).findById(anyLong());
+        verify(ordersRepository, times(1)).findById(anyLong());
         verify(orderDetailRepository, times(1)).findByOrdersId(any(Orders.class));
     }
 
@@ -203,7 +203,7 @@ public class OrderServiceTest {
         mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 3, 19, 14, 0));
 
         // Mocking repositories
-        when(orderRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
+        when(ordersRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
         when(userRepository.findById(mockOwner.getId())).thenReturn(Optional.of(mockOwner));
         when(orderDetailRepository.findByOrdersId(mockOrder)).thenReturn(mockOrderDetail);
 
@@ -212,7 +212,7 @@ public class OrderServiceTest {
 
         // Assert
         assertEquals(OrderStatus.COMPLETED, updatedStatus);  // 상태가 올바르게 업데이트되는지 확인
-        verify(orderRepository, times(1)).save(mockOrder);  // 저장 메서드가 호출되었는지 검증
+        verify(ordersRepository, times(1)).save(mockOrder);  // 저장 메서드가 호출되었는지 검증
     }
 
 

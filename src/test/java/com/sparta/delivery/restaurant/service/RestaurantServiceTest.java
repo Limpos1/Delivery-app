@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
@@ -45,8 +46,8 @@ public class RestaurantServiceTest {
         RestaurantRequestDto requestDto = new RestaurantRequestDto(
                 "Test Restaurant",
                 10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00")
+                LocalDateTime.parse("10:00"),
+                LocalDateTime.parse("22:00")
         );
 
         // 유저 생성 및 열할 설정
@@ -58,8 +59,8 @@ public class RestaurantServiceTest {
         Restaurant restaurant = new Restaurant(
                 "Test Restaurant",
                 10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
+                LocalDateTime.parse("10:00"),
+                LocalDateTime.parse("22:00"),
                 user);
 
         // 가짜 데이터 설정
@@ -82,8 +83,8 @@ public class RestaurantServiceTest {
         Restaurant restaurant = new Restaurant(
                 "Test Restaurant",
                 10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
+                LocalDateTime.parse("10:00"),
+                LocalDateTime.parse("22:00"),
                 new User()
         );
 
@@ -106,8 +107,8 @@ public class RestaurantServiceTest {
         Restaurant restaurant = new Restaurant(
                 "Test Restaurant",
                 10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
+                LocalDateTime.parse("10:00"),
+                LocalDateTime.parse("22:00"),
                 new User()
         );
 
@@ -136,8 +137,8 @@ public class RestaurantServiceTest {
         Restaurant restaurant = new Restaurant(
                 "Test Restaurant",
                 10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
+                LocalDateTime.parse("10:00"),
+                LocalDateTime.parse("22:00"),
                 owner
         );
 

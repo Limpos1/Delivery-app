@@ -77,11 +77,11 @@ class CartServiceTest {
     @Test
     void saveCart() {
         // 유저, 메뉴, 카트에 대한 Mock 설정
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));
-        when(menuRepository.findAllByIdIn(anyList())).thenReturn(List.of(menu1,menu2));
-        when(menuRepository.findById(1L)).thenReturn(Optional.of(menu1));  // menu1 반환
-        when(menuRepository.findById(2L)).thenReturn(Optional.of(menu2));  // menu2 반환
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+        when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));  // Optional<Cart> 반환
+        when(menuRepository.findAllByIdIn(anyList())).thenReturn(List.of(menu1, menu2));
+        when(menuRepository.findById(1L)).thenReturn(Optional.of(menu1));  // Optional<Menu> 반환
+        when(menuRepository.findById(2L)).thenReturn(Optional.of(menu2));  // Optional<Menu> 반환
         when(cartRepository.save(any(Cart.class))).thenReturn(cart);  // 카트 저장 Mock 설정
 
         // saveCart 메서드 호출
@@ -97,9 +97,11 @@ class CartServiceTest {
     }
 
 
+
+
     @Test
     void getViewAllTest(){
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
         when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));
 
         CartViewAllResponseDto response = cartService.getViewAllCart(user.getId());
@@ -112,7 +114,7 @@ class CartServiceTest {
 
     @Test
     void updateCart(){
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
         when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));
         when(menuRepository.findById(1L)).thenReturn(Optional.of(menu1));
 

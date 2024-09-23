@@ -59,7 +59,7 @@ class ReviewServiceTest {
         order = new Orders();
         ReflectionTestUtils.setField(order, "id", 1L);
         order.setUserId(user);
-        order.setRestaurantId(restaurant);
+        order.setRestaurant(restaurant);
         order.setStatus(OrderStatus.COMPLETED);
     }
 

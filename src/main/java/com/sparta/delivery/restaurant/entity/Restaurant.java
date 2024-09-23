@@ -4,8 +4,10 @@ import com.sparta.delivery.restaurant.enums.RestaurantStatus;
 import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -13,6 +15,7 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,11 +43,8 @@ public class Restaurant {
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status = RestaurantStatus.OPEN; // 가게 상태 (OPEN, CLOSED)
 
-    protected Restaurant() {
-    }
-
     // 가게 생성, 수정
-    public Restaurant(String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, User owner) {
+    public Restaurant(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, User owner) {
         // 최소 주문 금액 : 10,000 이상
         if (minOrderAmount < 10000) {
             throw new IllegalArgumentException("최소 주문 금액 10,000원 이상이어야 합니다.");

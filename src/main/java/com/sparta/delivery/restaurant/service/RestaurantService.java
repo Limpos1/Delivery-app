@@ -1,6 +1,6 @@
 package com.sparta.delivery.restaurant.service;
 
-import com.sparta.delivery.exception.NoSignedUserException;
+import com.sparta.delivery.etc.exception.NoSignedUserException;
 import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.menu.enums.MenuStatus;
 import com.sparta.delivery.menu.repository.MenuRepository;

@@ -3,7 +3,7 @@ package com.sparta.delivery.orders.aop;
 import com.sparta.delivery.orders.dto.CombineDto;
 import com.sparta.delivery.orders.dto.OrderDetailDto;
 import com.sparta.delivery.orders.repository.OrderDetailRepository;
-import com.sparta.delivery.orders.repository.OrderRepository;
+import com.sparta.delivery.orders.repository.OrdersRepository;
 import com.sparta.delivery.orders.entity.OrderDetail;
 import com.sparta.delivery.orders.enums.OrderStatus;
 import org.aspectj.lang.JoinPoint;
@@ -25,7 +25,7 @@ public class OrderAoP {
     @Autowired
     OrderDetailRepository orderDetailRepository;
     @Autowired
-    OrderRepository orderRepository;
+    OrdersRepository ordersRepository;
 
     // 주문 생성 메서드를 위한 Pointcut
     @Pointcut("execution(* com.sparta.delivery.orders.service.OrderService.orderrequest(..))")
@@ -61,7 +61,7 @@ public class OrderAoP {
 
     // 주문 ID로 레스토랑 ID를 얻는 메서드 (레포지토리 사용)
     private Long getRestaurantIdByOrderId(Long orderId) {
-        OrderDetail orderDetail = orderDetailRepository.findByOrdersId(orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order not found")));
+        OrderDetail orderDetail = orderDetailRepository.findByOrdersId(ordersRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Order not found")));
         return orderDetail.getRestaurantId();
     }
 }

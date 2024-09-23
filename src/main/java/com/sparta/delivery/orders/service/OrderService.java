@@ -5,7 +5,7 @@ import com.sparta.delivery.orders.dto.OrderRequestDto;
 import com.sparta.delivery.orders.dto.OrderResponseDto;
 import com.sparta.delivery.orders.dto.CombineDto;
 import com.sparta.delivery.orders.repository.OrderDetailRepository;
-import com.sparta.delivery.orders.repository.OrderRepository;
+import com.sparta.delivery.orders.repository.OrdersRepository;
 import com.sparta.delivery.orders.entity.OrderDetail;
 import com.sparta.delivery.orders.entity.Orders;
 import com.sparta.delivery.orders.enums.OrderStatus;
@@ -27,13 +27,13 @@ import static com.sparta.delivery.user.enums.UserRole.OWNER;
 public class OrderService {
 
 
-    private final OrderRepository orderRepository;
+    private final OrdersRepository ordersRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final UserRepository userRepository;
     private final RestaurantRepository restaurantRepository;
 
-    public OrderService(OrderRepository orderRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository, RestaurantRepository restaurantRepository) {
-        this.orderRepository = orderRepository;
+    public OrderService(OrdersRepository ordersRepository, OrderDetailRepository orderDetailRepository, UserRepository userRepository, RestaurantRepository restaurantRepository) {
+        this.ordersRepository = ordersRepository;
         this.orderDetailRepository = orderDetailRepository;
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
@@ -71,7 +71,7 @@ public class OrderService {
 
         Orders orders = new Orders(user, address, name,rest,ordertime, orderstatus);
         OrderDetail orderdetail = new OrderDetail(orders, menuid,restaurantid,count, price,ordertime);
-        orderRepository.save(orders);
+        ordersRepository.save(orders);
         orderDetailRepository.save(orderdetail);
 
         Long orderid = orderdetail.getOrdersId().getId();
@@ -91,7 +91,7 @@ public class OrderService {
     public ResponseEntity<CombineDto> getOrder(long id) {
 
         //주문을 찾아서 저장 없다면 예외처리
-        Orders order = orderRepository.findById(id).orElse(null);
+        Orders order = ordersRepository.findById(id).orElse(null);
         if(order==null){
             throw new IllegalArgumentException("Order not found");
         }
@@ -124,7 +124,7 @@ public class OrderService {
     }
 
     public OrderStatus updateOrder(Long userId, Long orderid, OrderStatus oEnum) {
-        Orders order = orderRepository.findById(orderid).orElse(null);
+        Orders order = ordersRepository.findById(orderid).orElse(null);
         OrderDetail orderDetail = orderDetailRepository.findByOrdersId(order);
         LocalDateTime modifyNow = LocalDateTime.now();
         User user = userRepository.findById(userId).orElse(null);
@@ -140,7 +140,7 @@ public class OrderService {
       try{
             orderDetail.setModifiedAt(modifyNow);
             order.setStatus(oEnum);
-            orderRepository.save(order);
+            ordersRepository.save(order);
       }catch(Exception e){
             throw new IllegalArgumentException("잘못된 요청입니다.");
       }
@@ -153,7 +153,7 @@ public class OrderService {
         if(!Objects.equals(user.getId(), userId)){
             throw new IllegalArgumentException("해당 가게의 사장님만 조회가능합니다.");
         }
-        List<Orders> orders = orderRepository.findAllByRestaurantId(restaurantId);
+        List<Orders> orders = ordersRepository.findAllByRestaurantId(restaurantId);
 
         // 각 주문을 OrderResponseDto로 변환하여 리스트 생성
         List<OrderResponseDto> orderResponseDtos = orders.stream().map(order -> {
