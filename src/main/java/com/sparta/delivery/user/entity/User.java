@@ -29,6 +29,9 @@ public class User extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable=false)
+    private String name;
+
     @Column(nullable = false, length = 100)
     @Email
     private String email; // 사용자 아이디 (이메일)
@@ -44,7 +47,7 @@ public class User extends Timestamped {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @OneToOne(mappedBy = "userId")
+    @OneToOne(mappedBy = "user")
     private Cart cart;
 
     @OneToMany(mappedBy = "userId")
