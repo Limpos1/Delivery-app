@@ -1,6 +1,7 @@
 package com.sparta.delivery.menu.service;
 
-import com.sparta.delivery.common.SignUser;
+
+import com.sparta.delivery.etc.common.SignUser;
 import com.sparta.delivery.menu.dto.*;
 import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.menu.enums.MenuStatus;

@@ -1,8 +1,8 @@
 package com.sparta.delivery.menu.controller;
 
-import com.sparta.delivery.annotation.Sign;
-import com.sparta.delivery.auth.dto.LoginRequestDto;
-import com.sparta.delivery.common.SignUser;
+
+import com.sparta.delivery.etc.annotation.Sign;
+import com.sparta.delivery.etc.common.SignUser;
 import com.sparta.delivery.menu.dto.*;
 import com.sparta.delivery.menu.service.MenuService;
 import lombok.RequiredArgsConstructor;
