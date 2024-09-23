@@ -1,6 +1,6 @@
 package com.sparta.delivery.user.entity;
 
-import com.sparta.delivery.common.Timestamped;
+import com.sparta.delivery.etc.common.Timestamped;
 import com.sparta.delivery.user.dto.SignupRequestDto;
 import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.enums.UserStatus;
@@ -11,8 +11,8 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 @Setter
-@Getter
 @Entity
+@Getter
 @NoArgsConstructor
 public class User extends Timestamped {
     @Id

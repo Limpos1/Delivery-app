@@ -1,13 +1,16 @@
 package com.sparta.delivery.review.entity;
 
-import com.sparta.delivery.order.entity.Orders;
-import com.sparta.delivery.restorant.entity.Restaurant;
+import com.sparta.delivery.orders.entity.Orders;
+import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
+@Getter
 @Entity
+@NoArgsConstructor
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,14 +26,34 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
-    private Restaurant storeId;
+    private Restaurant restaurant;
 
     @Column(nullable = false)
-    private Integer rating; // 별점 (1~5)
+    private int rating; // 별점 (1~5)
 
     @Column(nullable = false,length = 100)
     private String comment; // 리뷰 내용
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime reviewTime; // 리뷰 작성 시각
+    private LocalDateTime createdOn; // 리뷰 작성 시각
+
+    public Review(Restaurant restaurant, int rating, String content) {
+        this.restaurant = restaurant;
+        this.rating = rating;
+        this.comment = content;
+        this.createdOn = LocalDateTime.now();
+    }
+
+    public Orders getOrder() {
+
+        return orderId;
+    }
+
+    public User getUser() {
+        return userId;
+    }
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
 }

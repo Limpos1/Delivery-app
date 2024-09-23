@@ -1,7 +1,7 @@
 package com.sparta.delivery.user.controller;
 
-import com.sparta.delivery.annotation.Sign;
-import com.sparta.delivery.common.SignUser;
+import com.sparta.delivery.etc.annotation.Sign;
+import com.sparta.delivery.etc.common.SignUser;
 import com.sparta.delivery.user.dto.SignoutRequestDto;
 import com.sparta.delivery.user.dto.SignupRequestDto;
 import com.sparta.delivery.user.dto.SignupResponseDto;

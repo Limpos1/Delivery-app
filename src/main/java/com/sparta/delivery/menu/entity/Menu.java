@@ -1,10 +1,14 @@
 package com.sparta.delivery.menu.entity;
 import com.sparta.delivery.cart.entity.Cart;
-import com.sparta.delivery.restorant.entity.Restaurant;
+import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.menu.enums.MenuStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
+@NoArgsConstructor
 public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +31,23 @@ public class Menu {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MenuStatus status; // 메뉴 상태 (AVAILABLE, DELETED)
+
+    //메뉴 생성자
+    public Menu(String name, int price, Restaurant restaurant, MenuStatus status) {
+        this.name = name;
+        this.price = price;
+        this.restaurant = restaurant;
+        this.status = status;
+    }
+
+    //메뉴 업데이트 메서드
+    public void update(String name, int price){
+        this.name = name;
+        this.price = price;
+    }
+
+    //메뉴 삭제시 상태 업데이트 메서드
+    public void updateStatus(MenuStatus status){
+        this.status = status;
+    }
 }
