@@ -24,4 +24,11 @@ public class RestaurantRequestDto {
 
     @NotNull(message = "마감 시간은 필수입니다.")
     private LocalTime closeTime;
+
+    public RestaurantRequestDto(String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime) {
+        this.name = name;
+        this.minOrderAmount = minOrderAmount;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+    }
 }
