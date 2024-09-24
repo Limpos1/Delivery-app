@@ -22,7 +22,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +42,7 @@ public class MenuServiceTest {
         Long restaurantId = 2L;
         SignUser signUser = new SignUser(userId, "test@naver.com", "name");
         RestaurantDto restaurantDto = new RestaurantDto(restaurantId);
-        MenuSaveRequestDto menuSaveRequestDto = new MenuSaveRequestDto(1L, "chicken", 20000, 2L);
+        MenuSaveRequestDto menuSaveRequestDto = new MenuSaveRequestDto("chicken", 20000, 2L);
 
         //사장님 역할 설정
         User user = new User();
@@ -96,7 +95,7 @@ public class MenuServiceTest {
         Menu existMenu = new Menu("Old", 15000, restaurant, MenuStatus.AVAILABLE);
 
         //수정요청 dto
-        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L, 1L, "New", 18000, new RestaurantDto(3L));
+        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L, "New", 18000, 3L);
 
         given(menuRepository.findById(menuId)).willReturn(Optional.of(existMenu));
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -120,7 +119,7 @@ public class MenuServiceTest {
         Long menuId = 1L;
         SignUser signUser = new SignUser(userId, "test@naver.com", "name");
 
-        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L, menuId, "Updated Menu", 20000, new RestaurantDto(2L));
+        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(menuId, "Updated Menu", 20000, 2L);
 
         //사장
         User user = new User();
@@ -134,30 +133,30 @@ public class MenuServiceTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             menuService.updateMenu(signUser, menuId, menuUpdateRequestDto);
         });
-        System.out.println("예외발생 - "+ exception.getMessage());
+        System.out.println("예외발생 - " + exception.getMessage());
 
     }
 
 
     @Test
-    void 메뉴_수정_실패_유저없음(){
+    void 메뉴_수정_실패_유저없음() {
 
         //given
         Long userId = 1L;
         Long menuId = 1L;
         SignUser signUser = new SignUser(userId, "test@naver.com", "name");
 
-        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L,1L,"New",12000,new RestaurantDto(1L));
+        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L, "New", 12000, 1L);
 
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 
         //when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,()->menuService.updateMenu(signUser,menuId,menuUpdateRequestDto));
-        System.out.println("예외발생 - "+ exception.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> menuService.updateMenu(signUser, menuId, menuUpdateRequestDto));
+        System.out.println("예외발생 - " + exception.getMessage());
     }
 
     @Test
-    void 메뉴_수정_실패_사장이아님(){
+    void 메뉴_수정_실패_사장이아님() {
 
         //given
         Long userId = 1L;
@@ -168,17 +167,17 @@ public class MenuServiceTest {
         user.setId(userId);
         user.setRole(UserRole.USER);
 
-        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(userId,menuId,"Old",12000,new RestaurantDto(1L));
+        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(menuId, "Old", 12000, 1L);
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
 
         //when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,()->menuService.updateMenu(signUser,menuId,menuUpdateRequestDto));
-        System.out.println("예외발생 - "+ exception.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> menuService.updateMenu(signUser, menuId, menuUpdateRequestDto));
+        System.out.println("예외발생 - " + exception.getMessage());
     }
 
     @Test
-    void 메뉴_수정_실패_식당없음(){
+    void 메뉴_수정_실패_식당없음() {
         //given
         Long userId = 1L;
         Long menuId = 1L;
@@ -191,21 +190,21 @@ public class MenuServiceTest {
         user.setId(userId);
         user.setRole(UserRole.OWNER);
 
-        Menu menu = new Menu("Old",10000,null,MenuStatus.AVAILABLE);
+        Menu menu = new Menu("Old", 10000, null, MenuStatus.AVAILABLE);
 
-        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(userId,menuId,"New",12000,new RestaurantDto(restaurantId));
+        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(menuId, "New", 12000, restaurantId);
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(menuRepository.findById(menuId)).willReturn(Optional.of(menu));
         given(restaurantRepository.findById(restaurantId)).willReturn(Optional.empty());
 
         //when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,()->menuService.updateMenu(signUser,menuId,menuUpdateRequestDto));
-        System.out.println("예외발생 - "+ exception.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> menuService.updateMenu(signUser, menuId, menuUpdateRequestDto));
+        System.out.println("예외발생 - " + exception.getMessage());
     }
 
     @Test
-    void 메뉴_수정_실패_본인가게_아님(){
+    void 메뉴_수정_실패_본인가게_아님() {
         //given
         Long userId = 1L;
         Long menuId = 1L;
@@ -226,15 +225,14 @@ public class MenuServiceTest {
         restaurant.setId(restaurantId);
         restaurant.setOwnerId(anotherUser);
 
-        Menu menu = new Menu("Old",10000,restaurant,MenuStatus.AVAILABLE);
+        Menu menu = new Menu("Old", 10000, restaurant, MenuStatus.AVAILABLE);
 
-        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(userId,menuId,"New",12000,new RestaurantDto(restaurantId));
+        MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(menuId, "New", 12000, restaurantId);
 
         //when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,()->menuService.updateMenu(signUser,menuId,menuUpdateRequestDto));
-        System.out.println("예외발생 - "+ exception.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> menuService.updateMenu(signUser, menuId, menuUpdateRequestDto));
+        System.out.println("예외발생 - " + exception.getMessage());
     }
-
 
 
     @Test
@@ -245,7 +243,7 @@ public class MenuServiceTest {
         Long restaurantId = 2L;
         SignUser signUser = new SignUser(userId, "test@naver.com", "name");
 
-        MenuDeleteRequestDto menuDeleteRequestDto = new MenuDeleteRequestDto(userId, new RestaurantDto(restaurantId));
+        MenuDeleteRequestDto menuDeleteRequestDto = new MenuDeleteRequestDto(restaurantId);
 
         User user = new User();
         user.setId(userId);
