@@ -54,8 +54,8 @@ class UserControllerTest {
     @Test
     void 회원가입_성공() throws Exception {
         // Given
-        SignupRequestDto signupRequestDto = new SignupRequestDto("test@example.com", "Password123!", UserRole.USER);
-        SignupResponseDto signupResponseDto = new SignupResponseDto(1L, "test@example.com", LocalDateTime.now(), LocalDateTime.now());
+        SignupRequestDto signupRequestDto = new SignupRequestDto("test@example.com", "Password123!", "name", UserRole.USER);
+        SignupResponseDto signupResponseDto = new SignupResponseDto(1L, "test@example.com", "name", LocalDateTime.now(), LocalDateTime.now());
 
         // Mocking
         given(userService.createUser(any(SignupRequestDto.class))).willReturn(signupResponseDto);
@@ -71,7 +71,7 @@ class UserControllerTest {
     @Test
     void 회원가입_실패__중복이메일() throws Exception {
         // Given
-        SignupRequestDto signupRequestDto = new SignupRequestDto("duplicate@example.com", "Password123!", UserRole.USER);
+        SignupRequestDto signupRequestDto = new SignupRequestDto("duplicate@example.com", "Password123!", "name", UserRole.USER);
 
         // Mocking: 중복 이메일 예외 발생
         given(userService.createUser(any(SignupRequestDto.class))).willThrow(new DuplicateEmailException());
@@ -104,7 +104,7 @@ class UserControllerTest {
         // Given
 
         // Mock SignUser (로그인된 사용자)
-        SignUser signUser = new SignUser(1L, "test@example.com");
+        SignUser signUser = new SignUser(1L, "test@example.com", "name");
         SignoutRequestDto signoutRequestDto = new SignoutRequestDto("WrongPassword!");
 
         // PasswordEncoder의 matches 메서드가 false를 반환하도록 모킹
@@ -117,6 +117,7 @@ class UserControllerTest {
         mockMvc.perform(delete("/api/signout")
                         .requestAttr("userId", signUser.getId()) // SignUser 주입
                         .requestAttr("email", signUser.getEmail()) // SignUser 주입
+                        .requestAttr("name", signUser.getName()) // SignUser 주입
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(signoutRequestDto)))
                 .andExpect(status().isBadRequest());  // 400 Bad Request 기대

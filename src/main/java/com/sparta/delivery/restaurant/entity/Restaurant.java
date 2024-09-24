@@ -30,11 +30,11 @@ public class Restaurant {
 
     //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalDateTime으로 변경함.
     @Column(name = "openedAt",nullable = false)
-    private LocalDateTime openTime; // 오픈 시간
+    private LocalTime openTime; // 오픈 시간
 
     //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalDateTime으로 변경함.
     @Column(name = "closedAt", nullable = false)
-    private LocalDateTime closeTime; // 마감 시간
+    private LocalTime closeTime; // 마감 시간
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
@@ -44,7 +44,7 @@ public class Restaurant {
     private RestaurantStatus status = RestaurantStatus.OPEN; // 가게 상태 (OPEN, CLOSED)
 
     // 가게 생성, 수정
-    public Restaurant(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, User owner) {
+    public Restaurant(String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, User owner) {
         // 최소 주문 금액 : 10,000 이상
         if (minOrderAmount < 10000) {
             throw new IllegalArgumentException("최소 주문 금액 10,000원 이상이어야 합니다.");

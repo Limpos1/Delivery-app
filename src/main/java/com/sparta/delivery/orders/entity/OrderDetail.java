@@ -1,10 +1,14 @@
 package com.sparta.delivery.orders.entity;
 
+import com.sparta.delivery.cart.entity.Cart;
+import com.sparta.delivery.cart.entity.CartItem;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter
@@ -18,11 +22,14 @@ public class OrderDetail {
     @JoinColumn(name = "order_id", nullable = false)
     private Orders ordersId;
 
-    @Column(name="menu_id")
+    @Column(name = "menu_id")
     private Long menuId;
 
+    @Column(name="menu_name")
+    private String menuName;
+
     @Column(name="price")
-    private Long price;
+    private int price;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime orderTime; // 주문 시각
@@ -33,14 +40,13 @@ public class OrderDetail {
     @Column(name="restaurant_id")
     private Long restaurantId;
 
-    @Column
-    private Long count;
 
-    public OrderDetail(Orders ordersId, Long menuId, Long restaurantId, Long count, Long price,LocalDateTime orderTime) {
+
+    public OrderDetail(Orders ordersId, Long menuId,String menuName, Long restaurantId, int price,LocalDateTime orderTime) {
         this.ordersId = ordersId;
         this.menuId = menuId;
+        this.menuName = menuName;
         this.restaurantId = restaurantId;
-        this.count = count;
         this.price = price;
         this.orderTime = orderTime;
     }
