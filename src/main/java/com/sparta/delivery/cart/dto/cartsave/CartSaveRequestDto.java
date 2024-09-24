@@ -8,13 +8,11 @@ import java.util.List;
 @Getter
 public class CartSaveRequestDto {
 
-    private Long userId;
     private List<Long> menuId;
     private Long count;
 
 
-    public CartSaveRequestDto(Long userId, List<Long> menuId, Long count) {
-        this.userId = userId;
+    public CartSaveRequestDto(List<Long> menuId, Long count) {
         this.menuId = menuId;
         this.count = count;
     }
