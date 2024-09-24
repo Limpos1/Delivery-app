@@ -108,7 +108,7 @@ public class MenuService {
         }
 
         //삭제할 메뉴 확인
-        Menu menu = menuRepository.findById((menuDeleteRequestDto.getUserId()))
+        Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(()-> new IllegalArgumentException("삭제할 메뉴를 찾을 수 없습니다."));
 
         //해당 메뉴가 본인 가게 메뉴인지 확인
