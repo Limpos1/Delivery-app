@@ -7,7 +7,6 @@ import com.sparta.delivery.restaurant.dto.RestaurantDetailResponseDto;
 import com.sparta.delivery.restaurant.dto.RestaurantRequestDto;
 import com.sparta.delivery.restaurant.dto.RestaurantResponseDto;
 import com.sparta.delivery.restaurant.service.RestaurantService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,19 +24,32 @@ public class RestaurantController {
     }
 
     /**
-     * 가게 수정 또는 생성
-     * @param restaurantRequestDto : 가게 생성 또는 수정에 필요한 정보
-     *                             id(수정에만 필요), name, minOrderAmount, openTime, closeTime, category
-     * @return 가게 수정시 200 OK, 가게 생성 시 201 Created
+     * 가게생성
+     * @param restaurantRequestDto : 가게 생성에 필요한 정보
+     *                             name, minOrderAmount, openTime, closeTime, category
+     *                             category: KOREAN, WESTERN, CHINESE, JAPANESE
+     * @return 가게 생성 시 201 Created
      */
     @PostMapping
-    public ResponseEntity<RestaurantResponseDto> createOrUpdateRestaurant(
-            @Valid @RequestBody RestaurantRequestDto restaurantRequestDto,
+    public ResponseEntity<RestaurantResponseDto> createRestaurant(
+            @RequestBody RestaurantRequestDto restaurantRequestDto,
             @Sign SignUser signUser) {
         Long userId = signUser.getId();
 
-        RestaurantResponseDto responseDto = restaurantService.createOrUpdateRestaurant(restaurantRequestDto, userId);
-        return ResponseEntity.status(responseDto.getId() != null ? HttpStatus.OK : HttpStatus.CREATED).body(responseDto);
+        RestaurantResponseDto responseDto = restaurantService.createRestaurant(restaurantRequestDto, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    }
+
+    // 가게 수정 : 가게 id 필요
+    @PutMapping("/{id}")
+    public ResponseEntity<RestaurantResponseDto> updateRestaurant(
+            @PathVariable Long id,
+            @RequestBody RestaurantRequestDto restaurantRequestDto,
+            @Sign SignUser signUser){
+        Long userId = signUser.getId();
+
+        RestaurantResponseDto responseDto = restaurantService.updateRestaurant(id, restaurantRequestDto, userId);
+        return ResponseEntity.ok(responseDto);
     }
 
     // 고객의 가게 다건 조회, 업종(카테고리로) 조회
@@ -65,7 +77,7 @@ public class RestaurantController {
     }
 
     // 가게 폐업 시 상태만 폐업 상태로 변경
-    @PutMapping("/{restaurantId}")
+    @PutMapping("/{restaurantId}/close")
     public ResponseEntity<RestaurantResponseDto> closeRestaurant(
             @PathVariable Long restaurantId,
             @Sign SignUser signUser) {

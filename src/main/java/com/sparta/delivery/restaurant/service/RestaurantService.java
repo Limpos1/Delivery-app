@@ -15,10 +15,8 @@ import com.sparta.delivery.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,20 +53,6 @@ public class RestaurantService {
                 .orElseThrow(() -> new IllegalArgumentException("가게가 존재하지 않거나, 사장님이 소유한 가게가 아닙니다."));
     }
 
-    /**
-     * 가게 생성 또는 수정
-     * @param restaurantRequestDto 가게 ID가 있는 경우 가게정보 수정, 없는 경우 새로운 가게 생성
-     * @param userId ID를 통해 사용자 권환 확인
-     */
-    @Transactional
-    public RestaurantResponseDto createOrUpdateRestaurant(RestaurantRequestDto restaurantRequestDto, Long userId) {
-        if (restaurantRequestDto.getId() != null) {
-            return updateRestaurant(restaurantRequestDto, userId);
-        } else {
-            return createRestaurant(restaurantRequestDto, userId);
-        }
-    }
-
     // 가게 생성
     @Transactional
     public RestaurantResponseDto createRestaurant(RestaurantRequestDto requestDto, Long userId) {
@@ -94,7 +78,6 @@ public class RestaurantService {
             throw new IllegalArgumentException("잘못된 시간 형식입니다.");
         }
 
-
         Restaurant restaurant = new Restaurant(
                 requestDto.getName(),
                 requestDto.getMinOrderAmount(),
@@ -110,8 +93,8 @@ public class RestaurantService {
 
     // 가게 수정
     @Transactional
-    public RestaurantResponseDto updateRestaurant(RestaurantRequestDto requestDto, Long userId) {
-        Restaurant restaurant = findRestaurantByOwner(requestDto.getId(), userId);
+    public RestaurantResponseDto updateRestaurant(Long id, RestaurantRequestDto requestDto, Long userId) {
+        Restaurant restaurant = findRestaurantByOwner(id, userId);
 
         String inputOpenTime = requestDto.getOpenTime();
         String inputCloseTime = requestDto.getCloseTime();
@@ -127,10 +110,10 @@ public class RestaurantService {
 
         restaurant.updateRestaurant(
                 requestDto.getName(),
+                requestDto.getCategory(),
                 requestDto.getMinOrderAmount(),
                 openTime,
-                closeTime,
-                requestDto.getCategory()
+                closeTime
         );
         restaurantRepository.save(restaurant);
         return new RestaurantResponseDto(restaurant);

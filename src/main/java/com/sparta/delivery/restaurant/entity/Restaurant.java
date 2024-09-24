@@ -1,5 +1,6 @@
 package com.sparta.delivery.restaurant.entity;
 
+import com.sparta.delivery.restaurant.dto.RestaurantRequestDto;
 import com.sparta.delivery.restaurant.enums.RestaurantCategory;
 import com.sparta.delivery.restaurant.enums.RestaurantStatus;
 import com.sparta.delivery.user.entity.User;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 
 @Entity
@@ -57,18 +59,20 @@ public class Restaurant {
         }
 
         this.name = name;
+        this.category = category;
         this.minOrderAmount = minOrderAmount;
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.ownerId = owner;
-        this.category = category;
     }
 
     // 가게 수정, 정보 업데이트
-    public void updateRestaurant(
-            String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, RestaurantCategory category) {
+    public void updateRestaurant(String name, RestaurantCategory category, Long minOrderAmount, LocalTime openTime, LocalTime closeTime) {
         if (name != null && !name.isBlank()) {
             this.name = name;
+        }
+        if (category != null) {
+            this.category = category;
         }
         if (minOrderAmount != null && minOrderAmount >= 10000) {
             this.minOrderAmount = minOrderAmount;
@@ -78,9 +82,6 @@ public class Restaurant {
         }
         if (closeTime != null) {
             this.closeTime = closeTime;
-        }
-        if (category != null) {
-            this.category = category;
         }
     }
 
