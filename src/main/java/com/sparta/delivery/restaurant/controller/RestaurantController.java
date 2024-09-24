@@ -1,15 +1,13 @@
 package com.sparta.delivery.restaurant.controller;
 
 
-import com.sparta.delivery.etc.config.JwtUtil;
+import com.sparta.delivery.etc.annotation.Sign;
+import com.sparta.delivery.etc.common.SignUser;
 import com.sparta.delivery.restaurant.dto.RestaurantDetailResponseDto;
 import com.sparta.delivery.restaurant.dto.RestaurantRequestDto;
 import com.sparta.delivery.restaurant.dto.RestaurantResponseDto;
 import com.sparta.delivery.restaurant.service.RestaurantService;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,34 +19,31 @@ import java.util.List;
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
-    private final JwtUtil jwtUtil;
 
-    public RestaurantController(RestaurantService restaurantService, JwtUtil jwtUtil) {
+    public RestaurantController(RestaurantService restaurantService) {
         this.restaurantService = restaurantService;
-        this.jwtUtil = jwtUtil;
     }
 
-    // JWT 토큰에서 유저 ID 추출
-    private Long getUserIdFromToken(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        String jwtToken = jwtUtil.substringToken(token);
-        Claims claims = jwtUtil.extractClaims(jwtToken);
-        return Long.parseLong(claims.getSubject());
-    }
-
-    /*
-    가게 생성
-    id, name, minOrderAmount, openTime, closeTime, status
-     */
+    /* 가게생성
+    name, minOrderAmount, openTime, closeTime */
     @PostMapping
-    public ResponseEntity<RestaurantResponseDto> createRestaurant(
+    public ResponseEntity<RestaurantResponseDto> createOrUpdateRestaurant(
             @Valid @RequestBody RestaurantRequestDto restaurantRequestDto,
-            HttpServletRequest request) {
-        Long userId = getUserIdFromToken(request);
+            @Sign SignUser signUser) {
+        Long userId = signUser.getId();
 
         try {
-            RestaurantResponseDto responseDto = restaurantService.createRestaurant(restaurantRequestDto, userId);
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+            // 가게 ID가 있으면 수정, 없으면 생성
+            RestaurantResponseDto responseDto;
+            if (restaurantRequestDto.getId() != null) {
+                // 가게 수정
+                responseDto = restaurantService.updateRestaurant(restaurantRequestDto, userId);
+                return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+            } else {
+                // 가게 생성
+                responseDto = restaurantService.createRestaurant(restaurantRequestDto, userId);
+                return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+            }
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
@@ -74,8 +69,8 @@ public class RestaurantController {
     @PutMapping("/{restaurantId}/close")
     public ResponseEntity<RestaurantResponseDto> closeRestaurant(
             @PathVariable Long restaurantId,
-            HttpServletRequest request) {
-        Long userId = getUserIdFromToken(request);
+            @Sign SignUser signUser) {
+        Long userId = signUser.getId();
 
         try {
             RestaurantResponseDto responseDto = restaurantService.closeRestaurant(restaurantId, userId);

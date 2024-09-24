@@ -27,9 +27,8 @@ public class Restaurant {
     @Column(name = "min_order_price", nullable = false)
     private Long minOrderAmount; // 최소 주문 금액
 
-
     //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalDateTime으로 변경함.
-    @Column(name = "openedAt",nullable = false)
+    @Column(name = "openedAt", nullable = false)
     private LocalDateTime openTime; // 오픈 시간
 
     //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalDateTime으로 변경함.
@@ -43,13 +42,12 @@ public class Restaurant {
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status = RestaurantStatus.OPEN; // 가게 상태 (OPEN, CLOSED)
 
-    // 가게 생성, 수정
+    // 가게 생성
     public Restaurant(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, User owner) {
         // 최소 주문 금액 : 10,000 이상
         if (minOrderAmount < 10000) {
             throw new IllegalArgumentException("최소 주문 금액 10,000원 이상이어야 합니다.");
         }
-
         // 오픈, 마감 시간
         if (openTime.isAfter(closeTime)) {
             throw new IllegalArgumentException("오픈 시간은 마감 시간보다 빨라야 합니다.");
@@ -60,6 +58,22 @@ public class Restaurant {
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.ownerId = owner;
+    }
+
+    // 가게 수정, 정보 업데이트
+    public void updateRestaurant(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime) {
+        if (name != null && !name.isBlank()) {
+            this.name = name;
+        }
+        if (minOrderAmount != null && minOrderAmount >= 10000) {
+            this.minOrderAmount = minOrderAmount;
+        }
+        if (openTime != null) {
+            this.openTime = openTime;
+        }
+        if (closeTime != null) {
+            this.closeTime = closeTime;
+        }
     }
 
     // 가게 폐업, 가게 상태를 CLOSED로 변경

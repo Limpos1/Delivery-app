@@ -1,6 +1,5 @@
 package com.sparta.delivery.restaurant.service;
 
-import com.sparta.delivery.etc.exception.NoSignedUserException;
 import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.menu.enums.MenuStatus;
 import com.sparta.delivery.menu.repository.MenuRepository;
@@ -32,24 +31,34 @@ public class RestaurantService {
         this.menuRepository = menuRepository;
     }
 
-    // 가게 생성
-    @Transactional
+    private User findUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 아이디의 유저가 존재하지 않습니다."));
+    } // 유저 찾기
+
+    private Restaurant findRestaurantById(Long restaurantId) {
+        return restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalArgumentException("가게가 존재하지 않습니다."));
+    } // 가게 찾기
+
+    private Restaurant findRestaurantByOwner(Long restaurantId, Long ownerId) {
+        User owner = findUserById(ownerId);
+        return restaurantRepository.findByIdAndOwnerId(restaurantId, owner)
+                .orElseThrow(() -> new IllegalArgumentException("가게가 존재하지 않거나, 사장님이 소유한 가게가 아닙니다."));
+    }  // 가게 소유주 찾기
+
+    @Transactional // 가게생성
     public RestaurantResponseDto createRestaurant(RestaurantRequestDto requestDto, Long userId) {
+        User user = findUserById(userId);
 
-        // 유저 찾기
-        User user =  userRepository.findById(userId).orElseThrow(() -> new NoSignedUserException());
-
-        // 사장님 권한 확인
         if (!user.getRole().equals(UserRole.OWNER)) {
             throw new IllegalArgumentException("OWNER로 가입한 유저만 가게를 생성할 수 있습니다.");
-        }
+        } // 사장님 권한 확인
 
-        // 사장님은는 최대 3개의 가게만 운영할 수 있다
         if (restaurantRepository.countByOwnerId(user) >= 3) {
             throw new IllegalArgumentException("최대 3개의 가게만 운영할 수 있습니다.");
-        }
+        } // 사장님은는 최대 3개의 가게만 운영할 수 있다
 
-        // 가게 생성(조건은 생성자에서 처리)
         Restaurant restaurant = new Restaurant(
                 requestDto.getName(),
                 requestDto.getMinOrderAmount(),
@@ -61,8 +70,21 @@ public class RestaurantService {
         return new RestaurantResponseDto(restaurant);
     }
 
-     // 가게 조회, 다건 조회(메뉴 제외)
-    @Transactional
+    @Transactional // 가게수정
+    public RestaurantResponseDto updateRestaurant(RestaurantRequestDto requestDto, Long userId) {
+        Restaurant restaurant = findRestaurantByOwner(requestDto.getId(), userId);
+
+        restaurant.updateRestaurant(
+                requestDto.getName(),
+                requestDto.getMinOrderAmount(),
+                requestDto.getOpenTime(),
+                requestDto.getCloseTime()
+        );
+        restaurantRepository.save(restaurant);
+        return new RestaurantResponseDto(restaurant);
+    }
+
+    @Transactional // 가게조회, 다건조회(메뉴제외)
     public List<RestaurantResponseDto> getRestaurantsbyName(String name) {
         List<Restaurant> restaurants = restaurantRepository.findByNameContainingAndStatus(name, RestaurantStatus.OPEN);
         return restaurants.stream()
@@ -70,31 +92,23 @@ public class RestaurantService {
                 .collect(Collectors.toList());
     }
 
-    // 가게 조회, 단건 조회(메뉴 포함)
-    @Transactional
+    @Transactional // 가게조회, 단건조회(메뉴포함)
     public RestaurantDetailResponseDto getRestaurantById(Long restaurantId) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalArgumentException("가게가 존재하지 않습니다."));
+        Restaurant restaurant = findRestaurantById(restaurantId);
 
-        List<Menu> allMenus = menuRepository.findAll();
-        List<Menu> availableMenus = allMenus.stream()
+        if (restaurant.getStatus() != RestaurantStatus.OPEN) {
+            return null;
+        }
+
+        List<Menu> availableMenus = menuRepository.findAll().stream()
                 .filter(menu -> menu.getRestaurant().getId().equals(restaurantId) && menu.getStatus() == MenuStatus.AVAILABLE)
                 .collect(Collectors.toList());
-
         return new RestaurantDetailResponseDto(restaurant, availableMenus);
     }
 
-    // 가게 폐업
-    @Transactional
+    @Transactional // 가게폐업
     public RestaurantResponseDto closeRestaurant(Long restaurantId, Long ownerId) {
-        // ownerId로 User 찾기
-        User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
-
-        // restaurantId와 ownerId로 가게 찾기
-        Restaurant restaurant = restaurantRepository.findByIdAndOwnerId(restaurantId, owner)
-                .orElseThrow(() -> new IllegalArgumentException("해당 가게가 존재하기 않습니다."));
-
+        Restaurant restaurant = findRestaurantByOwner(restaurantId, ownerId);
         restaurant.closeRestaurant();
         return new RestaurantResponseDto(restaurant);
     }

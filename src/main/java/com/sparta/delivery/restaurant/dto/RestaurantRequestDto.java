@@ -7,10 +7,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Getter
 public class RestaurantRequestDto {
+
+    private Long id; // 가게 수정 시 사용할 ID
 
     @NotBlank(message = "가게 이름은 필수입니다.")
     @Column(nullable = false, length = 50)
@@ -26,7 +27,17 @@ public class RestaurantRequestDto {
     @NotNull(message = "마감 시간은 필수입니다.")
     private LocalDateTime closeTime;
 
+    // 가게 생성
     public RestaurantRequestDto(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime) {
+        this.name = name;
+        this.minOrderAmount = minOrderAmount;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+    }
+
+    // 가게 수정
+    public RestaurantRequestDto(Long id, String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime) {
+        this.id = id;
         this.name = name;
         this.minOrderAmount = minOrderAmount;
         this.openTime = openTime;

@@ -7,7 +7,6 @@ import com.sparta.delivery.restaurant.entity.Restaurant;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +20,9 @@ public class RestaurantDetailResponseDto {
     private List<MenuSaveResponseDto> menus;
 
     public RestaurantDetailResponseDto(Restaurant restaurant, List<Menu> availableMenus) {
+        if (restaurant == null) {
+            throw new IllegalArgumentException("가게 정보가 없습니다.");
+        }
         this.id = restaurant.getId();
         this.name = restaurant.getName();
         this.minOrderAmount = restaurant.getMinOrderAmount();
