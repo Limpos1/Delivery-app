@@ -21,12 +21,12 @@ public class RestaurantRequestDto {
     private Long minOrderAmount;
 
     @NotNull(message = "오픈 시간은 필수입니다.")
-    private LocalDateTime openTime;
+    private String openTime;
 
     @NotNull(message = "마감 시간은 필수입니다.")
-    private LocalDateTime closeTime;
+    private String closeTime;
 
-    public RestaurantRequestDto(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime) {
+    public RestaurantRequestDto(String name, Long minOrderAmount, String openTime, String closeTime) {
         this.name = name;
         this.minOrderAmount = minOrderAmount;
         this.openTime = openTime;

@@ -41,9 +41,7 @@ public class RestaurantController {
     id, name, minOrderAmount, openTime, closeTime, status
      */
     @PostMapping
-    public ResponseEntity<RestaurantResponseDto> createRestaurant(
-            @Valid @RequestBody RestaurantRequestDto restaurantRequestDto,
-            HttpServletRequest request) {
+    public ResponseEntity<RestaurantResponseDto> createRestaurant(@Valid @RequestBody RestaurantRequestDto restaurantRequestDto, HttpServletRequest request) {
         Long userId = getUserIdFromToken(request);
 
         try {
