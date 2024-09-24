@@ -47,7 +47,7 @@ class AuthServiceTest {
         LoginRequestDto requestDto = new LoginRequestDto(email, password);
 
         // 기존 생성자 대신 SignupRequestDto를 활용해 User 인스턴스화
-        SignupRequestDto signupRequestDto = new SignupRequestDto("test@example.com", "Password123!", UserRole.USER);
+        SignupRequestDto signupRequestDto = new SignupRequestDto("test@example.com", "Password123!", "name", UserRole.USER);
         User user = new User(signupRequestDto, encodedPassword);
 
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
@@ -90,7 +90,7 @@ class AuthServiceTest {
         LoginRequestDto requestDto = new LoginRequestDto(email, password);
 
         // 기존 생성자 대신 SignupRequestDto를 활용해 User 인스턴스화
-        SignupRequestDto signupRequestDto = new SignupRequestDto("test@example.com", "Password123!", UserRole.USER);
+        SignupRequestDto signupRequestDto = new SignupRequestDto("test@example.com", "Password123!", "name", UserRole.USER);
         User user = new User(signupRequestDto, encodedPassword);
 
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
@@ -112,7 +112,7 @@ class AuthServiceTest {
         LoginRequestDto requestDto = new LoginRequestDto(email, password);
 
         // 기존 생성자 대신 SignupRequestDto를 활용해 User 인스턴스화
-        SignupRequestDto signupRequestDto = new SignupRequestDto(email, "Password123!", UserRole.USER);
+        SignupRequestDto signupRequestDto = new SignupRequestDto(email, "Password123!", "name", UserRole.USER);
         User user = new User(signupRequestDto, encodedPassword);
         ReflectionTestUtils.setField(user, "status", UserStatus.WITHDRAWAL);
 
