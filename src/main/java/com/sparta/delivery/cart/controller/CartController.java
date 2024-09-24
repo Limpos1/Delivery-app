@@ -21,8 +21,9 @@ public class CartController {
     private Long count;
 
     @PostMapping("/carts/add")
-    public ResponseEntity<CartSaveResponseDto> saveCart(@RequestBody CartSaveRequestDto cartSaveRequestDto){
-        return ResponseEntity.ok(cartService.saveCart(cartSaveRequestDto));
+    public ResponseEntity<CartSaveResponseDto> saveCart(@Sign SignUser user, @RequestBody CartSaveRequestDto cartSaveRequestDto){
+        Long userId = user.getId();
+        return ResponseEntity.ok(cartService.saveCart(userId, cartSaveRequestDto));
     }
 
     @GetMapping("/carts")

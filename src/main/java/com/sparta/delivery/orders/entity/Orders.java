@@ -55,6 +55,10 @@ public class Orders {
         this.totalPrice = totalPrice;
     }
 
+    public Orders(Long totalPrice){
+        this.totalPrice = totalPrice;
+    }
+
     public Orders() {
 
     }
