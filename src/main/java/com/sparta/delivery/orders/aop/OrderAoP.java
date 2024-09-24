@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+
 import java.time.LocalDateTime;
 
 @Aspect
@@ -32,7 +33,7 @@ public class OrderAoP {
     public void orderRequestPointcut() {}
 
     // 주문 상태 업데이트 메서드를 위한 Pointcut
-    @Pointcut("execution(* com.sparta.delivery.orders.service.OrderService.updateOrder(Long, Long, com.sparta.delivery.order.enums.OrderStatus)) && args(userId, orderId, oEnum)")
+    @Pointcut("execution(* com.sparta.delivery.orders.service.OrderService.updateOrder(Long, Long, com.sparta.delivery.orders.enums.OrderStatus)) && args(userId, orderId, oEnum)")
     public void updateOrderPointcut(Long userId, Long orderId, OrderStatus oEnum) {}
 
     // 주문 생성 시 로그 남기기

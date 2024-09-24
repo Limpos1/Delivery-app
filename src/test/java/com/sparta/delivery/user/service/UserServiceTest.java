@@ -1,6 +1,5 @@
 package com.sparta.delivery.user.service;
 
-
 import com.sparta.delivery.etc.config.PasswordEncoder;
 import com.sparta.delivery.etc.exception.DuplicateEmailException;
 import com.sparta.delivery.etc.exception.WrongPasswordException;
@@ -41,7 +40,7 @@ class UserServiceTest {
     void 유저생성_성공() {
 
         // Given
-        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", UserRole.USER);
+        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", "name", UserRole.USER);
         String encodedPassword = "encodedPassword";
         given(passwordEncoder.encode(requestDto.getPassword())).willReturn(encodedPassword);
         given(userRepository.findByEmail(requestDto.getEmail())).willReturn(Optional.empty());
@@ -59,7 +58,7 @@ class UserServiceTest {
     @Test
     void 유저생성_실패__이메일_중복() {
         // Given
-        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", UserRole.USER);
+        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", "name", UserRole.USER);
         given(userRepository.findByEmail(requestDto.getEmail())).willReturn(Optional.of(new User()));
 
         // When & Then
@@ -76,7 +75,7 @@ class UserServiceTest {
         String encodedPassword = "encodedPassword";
 
         // 기존 생성자 대신 SignupRequestDto를 활용해 User 인스턴스화
-        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", UserRole.USER);
+        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", "name", UserRole.USER);
         User user = new User(requestDto, encodedPassword);
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
@@ -99,7 +98,7 @@ class UserServiceTest {
         String encodedPassword = "encodedPassword";
 
         // 기존 생성자 대신 SignupRequestDto를 활용해 User 인스턴스화
-        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", UserRole.USER);
+        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", "name", UserRole.USER);
         User user = new User(requestDto, encodedPassword);
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));

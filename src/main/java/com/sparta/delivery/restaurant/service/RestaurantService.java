@@ -16,6 +16,11 @@ import com.sparta.delivery.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +40,17 @@ public class RestaurantService {
     // 가게 생성
     @Transactional
     public RestaurantResponseDto createRestaurant(RestaurantRequestDto requestDto, Long userId) {
+        String inputOpenTime = requestDto.getOpenTime();
+        String inputCloseTime = requestDto.getCloseTime();
+        LocalTime openTime = null;
+        LocalTime closeTime = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        try{
+            openTime = LocalTime.parse(inputOpenTime,formatter);
+            closeTime = LocalTime.parse(inputCloseTime,formatter);
+        }catch(DateTimeParseException e){
+            throw new IllegalArgumentException("잘못된 시간 형식입니다.");
+        }
 
         // 유저 찾기
         User user =  userRepository.findById(userId).orElseThrow(() -> new NoSignedUserException());
@@ -53,8 +69,8 @@ public class RestaurantService {
         Restaurant restaurant = new Restaurant(
                 requestDto.getName(),
                 requestDto.getMinOrderAmount(),
-                requestDto.getOpenTime(),
-                requestDto.getCloseTime(),
+                openTime,
+                closeTime,
                 user);
 
         restaurantRepository.save(restaurant);
