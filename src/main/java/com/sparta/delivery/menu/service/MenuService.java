@@ -50,7 +50,7 @@ public class MenuService {
         Menu savedMenu = menuRepository.save(menu);
 
 
-       RestaurantDto restaurantDto = new RestaurantDto(restaurant);
+        RestaurantDto restaurantDto = new RestaurantDto(restaurant);
         return new MenuSaveResponseDto(
                 savedMenu.getName(),
                 savedMenu.getPrice(),
