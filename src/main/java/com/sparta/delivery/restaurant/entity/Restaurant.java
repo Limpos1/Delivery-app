@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 
 @Entity
@@ -26,13 +26,13 @@ public class Restaurant {
     @Column(name = "min_order_price", nullable = false)
     private Long minOrderAmount; // 최소 주문 금액
 
-    //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalDateTime으로 변경함.
+    //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalTime으로 변경함.
     @Column(name = "openedAt", nullable = false)
-    private LocalDateTime openTime; // 오픈 시간
+    private LocalTime openTime; // 오픈 시간
 
-    //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalDateTime으로 변경함.
+    //오후에 열고 새벽에 닫으면 오류가 발생. 따라서 LocalTime을 LocalTime으로 변경함.
     @Column(name = "closedAt", nullable = false)
-    private LocalDateTime closeTime; // 마감 시간
+    private LocalTime closeTime; // 마감 시간
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
@@ -46,7 +46,7 @@ public class Restaurant {
 
     // 가게 생성
     public Restaurant(
-            String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, User owner, RestaurantCategory category) {
+            String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, User owner, RestaurantCategory category) {
         // 최소 주문 금액 : 10,000 이상
         if (minOrderAmount < 10000) {
             throw new IllegalArgumentException("최소 주문 금액 10,000원 이상이어야 합니다.");
@@ -66,7 +66,7 @@ public class Restaurant {
 
     // 가게 수정, 정보 업데이트
     public void updateRestaurant(
-            String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, RestaurantCategory category) {
+            String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, RestaurantCategory category) {
         if (name != null && !name.isBlank()) {
             this.name = name;
         }

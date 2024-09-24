@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 public class RestaurantRequestDto {
@@ -23,16 +23,16 @@ public class RestaurantRequestDto {
     private Long minOrderAmount;
 
     @NotNull(message = "오픈 시간은 필수입니다.")
-    private LocalDateTime openTime;
+    private LocalTime openTime;
 
     @NotNull(message = "마감 시간은 필수입니다.")
-    private LocalDateTime closeTime;
+    private LocalTime closeTime;
 
     @NotNull(message = "가게 업종은 필수입니다.")
     private RestaurantCategory category;
 
     // 가게 생성
-    public RestaurantRequestDto(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, RestaurantCategory category) {
+    public RestaurantRequestDto(String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, RestaurantCategory category) {
         this.name = name;
         this.minOrderAmount = minOrderAmount;
         this.openTime = openTime;
@@ -41,7 +41,7 @@ public class RestaurantRequestDto {
     }
 
     // 가게 수정
-    public RestaurantRequestDto(Long id, String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, RestaurantCategory category) {
+    public RestaurantRequestDto(Long id, String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, RestaurantCategory category) {
         this.id = id;
         this.name = name;
         this.minOrderAmount = minOrderAmount;

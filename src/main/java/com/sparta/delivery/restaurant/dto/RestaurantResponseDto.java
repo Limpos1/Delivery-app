@@ -5,7 +5,7 @@ import com.sparta.delivery.restaurant.enums.RestaurantStatus;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 public class RestaurantResponseDto implements Serializable {
@@ -13,8 +13,8 @@ public class RestaurantResponseDto implements Serializable {
     private final Long id;
     private final String name;
     private final Long minOrderAmount;
-    private final LocalDateTime openTime;
-    private final LocalDateTime closeTime;
+    private final LocalTime openTime;
+    private final LocalTime closeTime;
     private final RestaurantStatus status;
 
     public RestaurantResponseDto(Restaurant restaurant) {

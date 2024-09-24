@@ -6,7 +6,7 @@ import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.restaurant.entity.Restaurant;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,8 +15,8 @@ public class RestaurantDetailResponseDto {
     private Long id;
     private String name;
     private Long minOrderAmount;
-    private LocalDateTime openTime;
-    private LocalDateTime closeTime;
+    private LocalTime openTime;
+    private LocalTime closeTime;
     private List<MenuSaveResponseDto> menus;
 
     public RestaurantDetailResponseDto(Restaurant restaurant, List<Menu> availableMenus) {
