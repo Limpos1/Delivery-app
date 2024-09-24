@@ -32,9 +32,9 @@ public class CartService {
     private final RedisTemplate<String, Cart> redisTemplate;
 
     @Transactional
-    public CartSaveResponseDto saveCart(CartSaveRequestDto cartSaveRequestDto) {
+    public CartSaveResponseDto saveCart(Long userId, CartSaveRequestDto cartSaveRequestDto) {
         //userId로 먼저 유저 확인
-        User user = userRepository.findById(cartSaveRequestDto.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         String cartKey = "cart:" + user.getId();

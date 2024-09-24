@@ -21,12 +21,12 @@ public class CartController {
     private Long count;
 
     @PostMapping("/carts/add")
-    public ResponseEntity<CartSaveResponseDto> saveCart(@RequestBody CartSaveRequestDto cartSaveRequestDto){
-        return ResponseEntity.ok(cartService.saveCart(cartSaveRequestDto));
+    public ResponseEntity<CartSaveResponseDto> saveCart(@Sign SignUser signUser,@RequestBody CartSaveRequestDto cartSaveRequestDto){
+        return ResponseEntity.ok(cartService.saveCart(signUser.getId(),cartSaveRequestDto));
     }
 
     @GetMapping("/carts")
-    public ResponseEntity<CartViewAllResponseDto> getViewAllCarts(@Sign SignUser signUser){
+     public ResponseEntity<CartViewAllResponseDto> getViewAllCarts(@Sign SignUser signUser){
         return ResponseEntity.ok(cartService.getViewAllCart(signUser.getId()));
     }
 
@@ -34,8 +34,7 @@ public class CartController {
     public ResponseEntity<CartUpdateResponseDto> updateCart(
             @Sign SignUser signUser,
             @PathVariable Long menuId,
-            @RequestParam Long count
-    ){
+            @RequestParam Long count){
         return ResponseEntity.ok(cartService.updateCart(signUser.getId(), menuId, count));
     }
 
