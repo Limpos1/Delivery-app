@@ -64,6 +64,7 @@ public class User extends Timestamped {
         this.password = encodedPassword;
         this.role = requestDto.getRole();
         this.status = UserStatus.NON_WITHDRAWAL;
+        this.name = requestDto.getName();
     }
 
     public void update() {
