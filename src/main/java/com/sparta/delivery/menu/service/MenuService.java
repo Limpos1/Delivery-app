@@ -33,7 +33,7 @@ public class MenuService {
         }
         //사용자가 등록하려는 가게가 본인 가게인지 확인
         //RestaurantDto에서 가게ID로 실제 restaurant 엔티티 조회
-        Restaurant restaurant = restaurantRepository.findById(menuSaveRequestDto.getRestaurantDto().getStoreId())
+        Restaurant restaurant = restaurantRepository.findById(menuSaveRequestDto.getRestaurantId())
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
         if (!restaurant.getOwnerId().equals(user)) {
             throw new IllegalArgumentException("본인의 가게인지 확인하세요");
@@ -47,11 +47,12 @@ public class MenuService {
         );
         Menu savedMenu = menuRepository.save(menu);
 
-//        RestaurantDto restaurantDto = new RestaurantDto();
+
+       RestaurantDto restaurantDto = new RestaurantDto(restaurant);
         return new MenuSaveResponseDto(
                 savedMenu.getName(),
                 savedMenu.getPrice(),
-                menuSaveRequestDto.getRestaurantDto(),
+                restaurantDto,
                 savedMenu.getId()
         );
     }
@@ -72,7 +73,7 @@ public class MenuService {
                 .orElseThrow(() -> new IllegalArgumentException("수정할 메뉴를 찾을 수 없습니다."));
 
         //이 메뉴가 본인 가게 메뉴인지 확인
-        Restaurant restaurant = restaurantRepository.findById(menuUpdateRequestDto.getRestaurantDto().getStoreId())
+        Restaurant restaurant = restaurantRepository.findById(menuUpdateRequestDto.getRestaurantId())
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
 
         if (!restaurant.getOwnerId().equals(user)) {
@@ -85,11 +86,12 @@ public class MenuService {
 
         Menu updatedMenu = menuRepository.save(menu);
 
+        RestaurantDto restaurantDto = new RestaurantDto(restaurant);
         return new MenuUpdateResponseDto(
                 updatedMenu.getId(),
                 updatedMenu.getName(),
                 updatedMenu.getPrice(),
-                menuUpdateRequestDto.getRestaurantDto()
+                restaurantDto
 
         );
 
@@ -112,7 +114,7 @@ public class MenuService {
                 .orElseThrow(()-> new IllegalArgumentException("삭제할 메뉴를 찾을 수 없습니다."));
 
         //해당 메뉴가 본인 가게 메뉴인지 확인
-        Restaurant restaurant = restaurantRepository.findById(menuDeleteRequestDto.getRestaurant().getStoreId())
+        Restaurant restaurant = restaurantRepository.findById(menuDeleteRequestDto.getRestaurantId())
                 .orElseThrow(()-> new IllegalArgumentException("가게를 찾을 수 없습니다."));
         if (!restaurant.getOwnerId().equals(user)) {
             throw new IllegalArgumentException("본인의 가게만 삭제 할 수 있습니다.");
