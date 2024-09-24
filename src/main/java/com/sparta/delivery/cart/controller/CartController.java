@@ -5,6 +5,8 @@ import com.sparta.delivery.cart.dto.cartsave.CartSaveResponseDto;
 import com.sparta.delivery.cart.dto.cartupdate.CartUpdateResponseDto;
 import com.sparta.delivery.cart.dto.cartviewall.CartViewAllResponseDto;
 import com.sparta.delivery.cart.service.CartService;
+import com.sparta.delivery.etc.annotation.Sign;
+import com.sparta.delivery.etc.common.SignUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,22 +25,22 @@ public class CartController {
         return ResponseEntity.ok(cartService.saveCart(cartSaveRequestDto));
     }
 
-    @GetMapping("/carts/{userId}")
-    public ResponseEntity<CartViewAllResponseDto> getViewAllCarts(@PathVariable Long userId){
-        return ResponseEntity.ok(cartService.getViewAllCart(userId));
+    @GetMapping("/carts")
+    public ResponseEntity<CartViewAllResponseDto> getViewAllCarts(@Sign SignUser signUser){
+        return ResponseEntity.ok(cartService.getViewAllCart(signUser.getId()));
     }
 
-    @PatchMapping("/carts/{userId}/update/{menuId}")
+    @PatchMapping("/carts/update/{menuId}")
     public ResponseEntity<CartUpdateResponseDto> updateCart(
-            @PathVariable Long userId,
+            @Sign SignUser signUser,
             @PathVariable Long menuId,
             @RequestParam Long count
     ){
-        return ResponseEntity.ok(cartService.updateCart(userId, menuId, count));
+        return ResponseEntity.ok(cartService.updateCart(signUser.getId(), menuId, count));
     }
 
-    @DeleteMapping("/cart/{userId}")
-    public void deleteCart(@PathVariable Long userId){
-        cartService.deleteCart(userId);
+    @DeleteMapping("/carts")
+    public void deleteCart(@Sign SignUser signUser){
+        cartService.deleteCart(signUser.getId());
     }
 }

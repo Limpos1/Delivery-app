@@ -1,7 +1,7 @@
 package com.sparta.delivery.review.service;
 
 import com.sparta.delivery.orders.entity.Orders;
-import com.sparta.delivery.orders.repository.OrderRepository;
+import com.sparta.delivery.orders.repository.OrdersRepository;
 import com.sparta.delivery.review.dto.getallreview.ReviewAllGetResponseDto;
 import com.sparta.delivery.review.dto.reviewsave.ReviewSaveRequestDto;
 import com.sparta.delivery.review.dto.reviewsave.ReviewSaveResponseDto;
@@ -22,7 +22,7 @@ public class ReviewService {
 
     private final ReviewReository reviewRepository;
     private final ReviewFilter reviewFilter;
-    private final OrderRepository orderRepository;
+    private final OrdersRepository orderRepository;
 
     @Transactional
     public ReviewSaveResponseDto saveReivew(Long orderId, ReviewSaveRequestDto reviewSaveRequestDto) {
@@ -39,8 +39,8 @@ public class ReviewService {
         return new ReviewSaveResponseDto(
                 savedReview.getId(),
                 order.getId(),
-                order.getUser().getId(),
-                order.getRestaurant().getId(),
+                order.getUserId().getId(),
+                order.getRestaurant(),
                 savedReview.getRating(),
                 savedReview.getComment(),
                 savedReview.getCreatedOn());

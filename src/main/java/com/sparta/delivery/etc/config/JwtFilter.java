@@ -53,6 +53,7 @@ public class JwtFilter implements Filter {
             // 사용자 정보를 ArgumentResolver 로 넘기기 위해 HttpServletRequest 에 세팅
             httpRequest.setAttribute("userId", Long.parseLong(claims.getSubject()));
             httpRequest.setAttribute("email", claims.get("email", String.class));
+            httpRequest.setAttribute("name", claims.get("name", String.class));
 
             if (jwtUtil.validateToken(jwt)) {
                 chain.doFilter(request, response);

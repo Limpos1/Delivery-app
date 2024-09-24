@@ -29,6 +29,9 @@ public class User extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable=false)
+    private String name;
+
     @Column(nullable = false, length = 100)
     @Email
     private String email; // 사용자 아이디 (이메일)
@@ -61,6 +64,7 @@ public class User extends Timestamped {
         this.password = encodedPassword;
         this.role = requestDto.getRole();
         this.status = UserStatus.NON_WITHDRAWAL;
+        this.name = requestDto.getName();
     }
 
     public void update() {
