@@ -15,6 +15,11 @@ import com.sparta.delivery.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,11 +82,24 @@ public class RestaurantService {
             throw new IllegalArgumentException("최대 3개의 가게만 운영할 수 있습니다.");
         }
 
+        String inputOpenTime = requestDto.getOpenTime();
+        String inputCloseTime = requestDto.getCloseTime();
+        LocalTime openTime = null;
+        LocalTime closeTime = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        try{
+            openTime = LocalTime.parse(inputOpenTime,formatter);
+            closeTime = LocalTime.parse(inputCloseTime,formatter);
+        }catch(DateTimeParseException e){
+            throw new IllegalArgumentException("잘못된 시간 형식입니다.");
+        }
+
+
         Restaurant restaurant = new Restaurant(
                 requestDto.getName(),
                 requestDto.getMinOrderAmount(),
-                requestDto.getOpenTime(),
-                requestDto.getCloseTime(),
+                openTime,
+                closeTime,
                 user,
                 requestDto.getCategory()
                 );
@@ -95,11 +113,23 @@ public class RestaurantService {
     public RestaurantResponseDto updateRestaurant(RestaurantRequestDto requestDto, Long userId) {
         Restaurant restaurant = findRestaurantByOwner(requestDto.getId(), userId);
 
+        String inputOpenTime = requestDto.getOpenTime();
+        String inputCloseTime = requestDto.getCloseTime();
+        LocalTime openTime = null;
+        LocalTime closeTime = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        try{
+            openTime = LocalTime.parse(inputOpenTime,formatter);
+            closeTime = LocalTime.parse(inputCloseTime,formatter);
+        }catch(DateTimeParseException e){
+            throw new IllegalArgumentException("잘못된 시간 형식입니다.");
+        }
+
         restaurant.updateRestaurant(
                 requestDto.getName(),
                 requestDto.getMinOrderAmount(),
-                requestDto.getOpenTime(),
-                requestDto.getCloseTime(),
+                openTime,
+                closeTime,
                 requestDto.getCategory()
         );
         restaurantRepository.save(restaurant);
@@ -131,7 +161,8 @@ public class RestaurantService {
     // 사장님의 본인 가게 조회
     @Transactional
     public List<RestaurantResponseDto> getRestaurantsByOwner(Long ownerId) {
-        List<Restaurant> restaurants = restaurantRepository.findByOwnerIdAndStatus(ownerId, RestaurantStatus.OPEN);
+        User user = findUserById(ownerId);
+        List<Restaurant> restaurants = restaurantRepository.findByOwnerIdAndStatus(user, RestaurantStatus.OPEN);
         return restaurants.stream()
                 .map(RestaurantResponseDto::new)
                 .collect(Collectors.toList());

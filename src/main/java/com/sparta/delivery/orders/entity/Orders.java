@@ -35,17 +35,28 @@ public class Orders {
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
-
     @Enumerated(EnumType.STRING)
     private OrderStatus status; // 주문 상태
 
-    public Orders(User userId, String address, String name,Restaurant restaurant,LocalDateTime orderTime, OrderStatus status) {
+    @Column
+    private Long count;
+
+    @Column(name="total_price")
+    private Long totalPrice;
+
+    public Orders(User userId, String address, String name,Restaurant restaurant,LocalDateTime orderTime, OrderStatus status,Long count, Long totalPrice) {
         this.userId=userId;
         this.address = address;
         this.name = name;
         this.restaurant = restaurant;
         this.orderTime = orderTime;
         this.status = status;
+        this.count = count;
+        this.totalPrice = totalPrice;
+    }
+
+    public Orders(Long totalPrice){
+        this.totalPrice = totalPrice;
     }
 
     public Orders() {

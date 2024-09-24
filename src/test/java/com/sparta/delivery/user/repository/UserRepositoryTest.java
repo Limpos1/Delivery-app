@@ -24,7 +24,7 @@ class UserRepositoryTest {
         // Given
         String encodedPassword = "encodedPassword";
         // 기존 생성자 대신 SignupRequestDto를 활용해 User 인스턴스화
-        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", UserRole.USER);
+        SignupRequestDto requestDto = new SignupRequestDto("test@example.com", "Password123!", "name", UserRole.USER);
         User user = new User(requestDto, encodedPassword);
         ReflectionTestUtils.setField(user, "id", 1L);
         userRepository.save(user);

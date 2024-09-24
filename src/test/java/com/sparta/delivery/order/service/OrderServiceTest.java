@@ -23,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,12 +67,12 @@ public class OrderServiceTest {
 
         //오후에 열고 새벽에 닫으면 오류가 발생.
         //날짜가 필요함, 따라서 LocalTime을 LocalDateTime으로 변경함.
-        rest.setOpenTime(LocalDateTime.of(2024, 9,23,12,30));
-        rest.setCloseTime(LocalDateTime.of(2024,9,24,5,30));
+        rest.setOpenTime(LocalTime.of(12,30));
+        rest.setCloseTime(LocalTime.of(5,30));
         restaurantRepository.save(rest);
 
 
-        OrderRequestDto requestDto = new OrderRequestDto(restaurantId, menuId, address, 15000L);
+        OrderRequestDto requestDto = new OrderRequestDto(restaurantId, address, 15000L);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(rest));
 
@@ -85,7 +86,7 @@ public class OrderServiceTest {
         Long orderId = mockOrderDetail.getOrdersId().getId();
 
 
-        ResponseEntity<CombineDto> response = orderService.orderrequest(userId,requestDto);
+        ResponseEntity<CombineDto> response = orderService.requestOrder(userId,requestDto);
 
         // Then
         assertEquals(200, response.getStatusCodeValue());

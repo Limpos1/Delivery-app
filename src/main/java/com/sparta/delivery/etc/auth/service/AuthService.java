@@ -37,7 +37,8 @@ public class AuthService {
         //정상유저라면 JWT 토큰 반환
         return jwtUtil.createToken(
                 user.getId(),
-                user.getEmail()
+                user.getEmail(),
+                user.getName()
         );
     }
 }

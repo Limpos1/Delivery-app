@@ -1,5 +1,7 @@
 package com.sparta.delivery.orders.service;
 
+import com.sparta.delivery.cart.entity.Cart;
+import com.sparta.delivery.cart.entity.CartItem;
 import com.sparta.delivery.orders.dto.OrderDetailDto;
 import com.sparta.delivery.orders.dto.OrderRequestDto;
 import com.sparta.delivery.orders.dto.OrderResponseDto;
@@ -15,8 +17,11 @@ import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,51 +43,77 @@ public class OrderService {
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
     }
-    public ResponseEntity<CombineDto> orderrequest(Long userId, OrderRequestDto req) {
+    public ResponseEntity<CombineDto> requestOrder(Long userId, OrderRequestDto req,String inputName) {
         LocalDateTime ordertime = LocalDateTime.now();
-        User user = userRepository.findById(userId).orElse(null);
+        LocalDateTime openTime;
+        LocalDateTime closeTime;
+        Long totalPrice = 0L;
+        List<OrderDetailDto> orderDetails = new ArrayList<>();
+
+        User user = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("User not found"));
         Restaurant rest = restaurantRepository.findById(req.getRestaurantId()).orElseThrow(()->new IllegalArgumentException("등록된 식당이 없습니다."));
+        Cart cart = user.getCart();
 
+        //---------------------------------------------------------------------------------------------------
 
-        LocalDateTime openTime = rest.getOpenTime();
-        LocalDateTime closeTime = rest.getCloseTime();
-        if(rest==null){
-            throw new IllegalArgumentException("Restaurant not found");
+        int openHour = rest.getOpenTime().getHour();
+        int openMinute = rest.getOpenTime().getMinute();
+        int closeHour = rest.getCloseTime().getHour();
+        int closeMinute = rest.getCloseTime().getMinute();
+
+        openTime = LocalDateTime.of(ordertime.getYear(),ordertime.getMonthValue(),ordertime.getDayOfMonth(),openHour,openMinute);
+        //만약 오후에 열고 새벽에 닫는 가게라면 현재 날짜에서 +1을 하여 다음날까지 계산
+        if(closeHour < openHour){
+            LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
+            closeTime = LocalDateTime.of(tomorrow.getYear(), tomorrow.getMonth(), tomorrow.getDayOfMonth(), closeHour, closeMinute);
+        }else{
+            closeTime = LocalDateTime.of(ordertime.getYear(), ordertime.getMonth(), ordertime.getDayOfMonth(), closeHour, closeMinute);
         }
+        //-----------------------------------------------------------------------------------------------------
+
         if(ordertime.isBefore(openTime) || ordertime.isAfter(closeTime)){
             throw new IllegalArgumentException("영업 시간이 아닙니다.");
-        }
-
-        if(user==null){
-            throw new IllegalArgumentException("User not found");
         }
 
         Long price = req.getPrice();
         if(price<rest.getMinOrderAmount()){
             throw new IllegalArgumentException("최소 주문 금액 이상이어야 합니다.");
         }
-        String name = user.getName();
         String address = req.getAddress();
         OrderStatus orderstatus = PENDING;
-        Long menuid = req.getMenuId();
-        Long restaurantid = req.getRestaurantId();
-        Long count = 1L; //지금은 1개의 메뉴만 가능하기 때문에 메뉴의 개수는 1개로 고정
-
-
-        Orders orders = new Orders(user, address, name,rest,ordertime, orderstatus);
-        OrderDetail orderdetail = new OrderDetail(orders, menuid,restaurantid,count, price,ordertime);
+        Long restaurantid = rest.getId();
+        Long count = (long)cart.getCartItems().size();
+        Orders orders = new Orders(user, address, inputName,rest,ordertime, orderstatus,count,totalPrice);
         ordersRepository.save(orders);
-        orderDetailRepository.save(orderdetail);
+        Long ordersId=orders.getId();
 
-        Long orderid = orderdetail.getOrdersId().getId();
+        for(CartItem cartItem : cart.getCartItems()){
+            OrderDetail orderDetail = new OrderDetail();
+            orderDetail.setOrdersId(orders);
+            orderDetail.setRestaurantId(restaurantid);
+            orderDetail.setMenuId(cartItem.getMenu().getId());
+            orderDetail.setMenuName(cartItem.getMenu().getName());
+            orderDetail.setPrice(cartItem.getMenu().getPrice());
+
+            totalPrice+=cartItem.getMenu().getPrice();
+
+            orderDetail.setOrderTime(ordertime);
+            orderDetail.setRestaurantId(rest.getId());
+            orderDetailRepository.save(orderDetail);
+            OrderDetailDto dtailDto = new OrderDetailDto(ordersId,orderDetail.getMenuId(),orderDetail.getMenuName(),orderDetail.getRestaurantId(), (long) orderDetail.getPrice(),ordertime);
+            orderDetails.add(dtailDto);
+        }
+
+
+        orders.setTotalPrice(totalPrice);
+        ordersRepository.save(orders);
+
+
+        Long orderid = orders.getId();
 
         //orders Dto
-        OrderResponseDto orderDto = new OrderResponseDto(userId, address, name, ordertime, orderstatus);
-        //OrderDetail Dto
-        OrderDetailDto detailDto = new OrderDetailDto(orderid, menuid, restaurantid, count,price,ordertime);
-
-
-        CombineDto resDto = new CombineDto(orderDto, detailDto);
+        OrderResponseDto orderDto = new OrderResponseDto(userId,address, inputName,ordertime,orderstatus,orderid,count, totalPrice,restaurantid);
+        CombineDto resDto = new CombineDto(orderDto, orderDetails);
 
         return ResponseEntity.ok(resDto);
 
@@ -90,42 +121,53 @@ public class OrderService {
 
     public ResponseEntity<CombineDto> getOrder(long id) {
 
+        List<OrderDetail> orderDetails;
+        List<OrderDetailDto> orderDetailDtos = new ArrayList<>();
         //주문을 찾아서 저장 없다면 예외처리
         Orders order = ordersRepository.findById(id).orElse(null);
         if(order==null){
             throw new IllegalArgumentException("Order not found");
         }
 
-        //상세 주문을 찾아서 저장
-        OrderDetail orderDetail = orderDetailRepository.findByOrdersId(order);
+        orderDetails = orderDetailRepository.findAllByOrdersId(order);
 
         //주문 정보를 Dto에 담기위한 과정
         Long userId = order.getUserId().getId();
         String address = order.getAddress();
         String name = order.getName();
-        LocalDateTime orderTime = orderDetail.getOrderTime();
+        LocalDateTime orderTime = order.getOrderTime();
         OrderStatus status = order.getStatus();
+        Long orderId = order.getId();
+        Long count = order.getCount();
+        Long totalPrice = order.getTotalPrice();
+        Long restaurantid = order.getRestaurant().getId();
+
+        OrderResponseDto orderDto = new OrderResponseDto(userId, address, name, orderTime, status, orderId, count, totalPrice,restaurantid);
 
         //상세 정보를 Dto에 담기위한 과정
-        Long orderId = orderDetail.getOrdersId().getId();
-        Long menuid = orderDetail.getMenuId();
-        Long restaurantid = orderDetail.getRestaurantId();
-        Long count = orderDetail.getCount();
-        Long price = orderDetail.getPrice();
+        for(OrderDetail orderDetail : orderDetails){
+            Long orderid = orderDetail.getOrdersId().getId();
+            Long menuid = orderDetail.getMenuId();
+            Long restaurantId = orderDetail.getRestaurantId();
+            String menuName = orderDetail.getMenuName();
+            Long price = (long) orderDetail.getPrice();
+            LocalDateTime ordertime = orderDetail.getOrderTime();
+            OrderDetailDto detailDto = new OrderDetailDto(orderid, menuid,menuName, restaurantId, price, ordertime);
+            orderDetailDtos.add(detailDto);
+        }
 
-        // Dto에 데이터 저장
-        OrderResponseDto orderDto = new OrderResponseDto(userId, address, name, orderTime,status);
-        OrderDetailDto detailDto = new OrderDetailDto(orderId, menuid, restaurantid, count, price,orderTime);
 
-        CombineDto resDto = new CombineDto(orderDto,detailDto);
+
+
+
+        CombineDto resDto = new CombineDto(orderDto,orderDetailDtos);
 
 
         return ResponseEntity.ok(resDto);
     }
 
-    public OrderStatus updateOrder(Long userId, Long orderid, OrderStatus oEnum) {
+    public OrderStatus updateOrder(Long userId, Long orderid, String oEnum)  {
         Orders order = ordersRepository.findById(orderid).orElse(null);
-        OrderDetail orderDetail = orderDetailRepository.findByOrdersId(order);
         LocalDateTime modifyNow = LocalDateTime.now();
         User user = userRepository.findById(userId).orElse(null);
         if(user.getRole()!=OWNER){
@@ -138,8 +180,7 @@ public class OrderService {
             throw new IllegalArgumentException("User not found");
         }
       try{
-            orderDetail.setModifiedAt(modifyNow);
-            order.setStatus(oEnum);
+            order.setStatus(OrderStatus.valueOf(oEnum));
             ordersRepository.save(order);
       }catch(Exception e){
             throw new IllegalArgumentException("잘못된 요청입니다.");
@@ -160,9 +201,13 @@ public class OrderService {
             return new OrderResponseDto(
                     order.getUserId().getId(),  // 주문자 ID
                     order.getAddress(),         // 주문 주소
-                    order.getName(),            // 주문자 이름
-                    order.getOrderTime(),        // 주문 시간
-                    order.getStatus()           // 주문 상태
+                    order.getName(),// 주문자 이름
+                    order.getOrderTime(),
+                    order.getStatus(),
+                    order.getId(),
+                    order.getCount(),
+                    order.getTotalPrice(),
+                    order.getRestaurant().getId()
             );
         }).collect(Collectors.toList());
 

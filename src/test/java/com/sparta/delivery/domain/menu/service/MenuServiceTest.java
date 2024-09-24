@@ -41,7 +41,7 @@ public class MenuServiceTest {
         //given
         Long userId = 1L;
         Long restaurantId = 2L;
-        SignUser signUser = new SignUser(userId, "test@naver.com");
+        SignUser signUser = new SignUser(userId, "test@naver.com", "name");
         RestaurantDto restaurantDto = new RestaurantDto(restaurantId);
         MenuSaveRequestDto menuSaveRequestDto = new MenuSaveRequestDto(1L, "chicken", 20000, 2L);
 
@@ -81,7 +81,7 @@ public class MenuServiceTest {
         Long menuId = 1L;
         Long restaurantId = 3L;
 
-        SignUser signUser = new SignUser(userId, "test@naver.com");
+        SignUser signUser = new SignUser(userId, "test@naver.com", "name");
 
         //user랑 restaurant mock
         User user = new User();
@@ -118,7 +118,7 @@ public class MenuServiceTest {
         //given
         Long userId = 1L;
         Long menuId = 1L;
-        SignUser signUser = new SignUser(userId, "test@naver.com");
+        SignUser signUser = new SignUser(userId, "test@naver.com", "name");
 
         MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L, menuId, "Updated Menu", 20000, new RestaurantDto(2L));
 
@@ -145,7 +145,7 @@ public class MenuServiceTest {
         //given
         Long userId = 1L;
         Long menuId = 1L;
-        SignUser signUser = new SignUser(userId, "test@naver.com");
+        SignUser signUser = new SignUser(userId, "test@naver.com", "name");
 
         MenuUpdateRequestDto menuUpdateRequestDto = new MenuUpdateRequestDto(1L,1L,"New",12000,new RestaurantDto(1L));
 
@@ -162,7 +162,7 @@ public class MenuServiceTest {
         //given
         Long userId = 1L;
         Long menuId = 1L;
-        SignUser signUser = new SignUser(userId, "test@naver.com");
+        SignUser signUser = new SignUser(userId, "test@naver.com", "name");
         //고객유저
         User user = new User();
         user.setId(userId);
@@ -184,7 +184,7 @@ public class MenuServiceTest {
         Long menuId = 1L;
         Long restaurantId = 2L;
 
-        SignUser signUser = new SignUser(userId, "test@naver.com");
+        SignUser signUser = new SignUser(userId, "test@naver.com", "name");
 
         //사장
         User user = new User();
@@ -210,7 +210,7 @@ public class MenuServiceTest {
         Long userId = 1L;
         Long menuId = 1L;
         Long restaurantId = 2L;
-        SignUser signUser = new SignUser(userId, "test@naver.com");
+        SignUser signUser = new SignUser(userId, "test@naver.com", "name");
 
         //가게주인
         User user = new User();
@@ -243,7 +243,7 @@ public class MenuServiceTest {
         Long menuId = 1L;
         Long userId = 1L;
         Long restaurantId = 2L;
-        SignUser signUser = new SignUser(userId, "test@naver.com");
+        SignUser signUser = new SignUser(userId, "test@naver.com", "name");
 
         MenuDeleteRequestDto menuDeleteRequestDto = new MenuDeleteRequestDto(userId, new RestaurantDto(restaurantId));
 
