@@ -23,11 +23,11 @@ public class OrderController {
     }
 
     //주문 요청 API
-    @PostMapping("/orderrequests")
+    @PostMapping("/requestOrders")
     // JWT 필터링을 통해 인증된 사용자의 정보를 가져오는 매개변수 추가가 필요하다. 현재는 임시로 Dto에 있는 UserId를 사용
-    public ResponseEntity<CombineDto> orderrequest(@Sign SignUser user, OrderRequestDto req) {
+    public ResponseEntity<CombineDto> requestOrder(@Sign SignUser user, OrderRequestDto req) {
         Long userId = user.getId();
-        return orderService.orderrequest(userId, req);
+        return orderService.requestOrder(userId, req);
     }
 
     // 주문 조회 API
