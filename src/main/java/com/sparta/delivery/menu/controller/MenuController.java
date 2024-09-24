@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("restaurant/menu")
+@RequestMapping("restaurants/menu")
 public class MenuController {
 
     private final MenuService menuService;
 
     //메뉴 생성
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<MenuSaveResponseDto> saveMenu(@Sign SignUser signUser, @RequestBody MenuSaveRequestDto menuSaveRequestDto) {
         MenuSaveResponseDto response = menuService.saveMenu(signUser,menuSaveRequestDto);
         return ResponseEntity.ok(response);

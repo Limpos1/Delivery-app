@@ -8,6 +8,7 @@ public class MenuSaveRequestDto {
     private int price; //메뉴가격
     private Long restaurantId; //식당아이디
 
+
     public MenuSaveRequestDto(String menu, int price, long restaurantId) {
         this.name = menu;
         this.price = price;
