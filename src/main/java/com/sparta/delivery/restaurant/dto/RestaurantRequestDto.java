@@ -1,5 +1,6 @@
 package com.sparta.delivery.restaurant.dto;
 
+import com.sparta.delivery.restaurant.enums.RestaurantCategory;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -27,20 +28,25 @@ public class RestaurantRequestDto {
     @NotNull(message = "마감 시간은 필수입니다.")
     private LocalDateTime closeTime;
 
+    @NotNull(message = "가게 업종은 필수입니다.")
+    private RestaurantCategory category;
+
     // 가게 생성
-    public RestaurantRequestDto(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime) {
+    public RestaurantRequestDto(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, RestaurantCategory category) {
         this.name = name;
         this.minOrderAmount = minOrderAmount;
         this.openTime = openTime;
         this.closeTime = closeTime;
+        this.category = category;
     }
 
     // 가게 수정
-    public RestaurantRequestDto(Long id, String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime) {
+    public RestaurantRequestDto(Long id, String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, RestaurantCategory category) {
         this.id = id;
         this.name = name;
         this.minOrderAmount = minOrderAmount;
         this.openTime = openTime;
         this.closeTime = closeTime;
+        this.category = category;
     }
 }

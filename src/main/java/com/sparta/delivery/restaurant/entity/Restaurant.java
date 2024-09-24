@@ -1,5 +1,6 @@
 package com.sparta.delivery.restaurant.entity;
 
+import com.sparta.delivery.restaurant.enums.RestaurantCategory;
 import com.sparta.delivery.restaurant.enums.RestaurantStatus;
 import com.sparta.delivery.user.entity.User;
 import jakarta.persistence.*;
@@ -7,9 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 
 @Entity
@@ -40,10 +39,14 @@ public class Restaurant {
     private User ownerId; // 가게 소유주 (사장님)
 
     @Enumerated(EnumType.STRING)
-    private RestaurantStatus status = RestaurantStatus.OPEN; // 가게 상태 (OPEN, CLOSED)
+    private RestaurantStatus status = RestaurantStatus.OPEN; // 가게상태(OPEN, CLOSED)
+
+    @Enumerated(EnumType.STRING)
+    private RestaurantCategory category; // 가게업종(KOREAN, WESTERN, CHINESE, JAPANESE)
 
     // 가게 생성
-    public Restaurant(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, User owner) {
+    public Restaurant(
+            String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, User owner, RestaurantCategory category) {
         // 최소 주문 금액 : 10,000 이상
         if (minOrderAmount < 10000) {
             throw new IllegalArgumentException("최소 주문 금액 10,000원 이상이어야 합니다.");
@@ -58,10 +61,12 @@ public class Restaurant {
         this.openTime = openTime;
         this.closeTime = closeTime;
         this.ownerId = owner;
+        this.category = category;
     }
 
     // 가게 수정, 정보 업데이트
-    public void updateRestaurant(String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime) {
+    public void updateRestaurant(
+            String name, Long minOrderAmount, LocalDateTime openTime, LocalDateTime closeTime, RestaurantCategory category) {
         if (name != null && !name.isBlank()) {
             this.name = name;
         }
@@ -73,6 +78,9 @@ public class Restaurant {
         }
         if (closeTime != null) {
             this.closeTime = closeTime;
+        }
+        if (category != null) {
+            this.category = category;
         }
     }
 

@@ -24,40 +24,31 @@ public class RestaurantController {
         this.restaurantService = restaurantService;
     }
 
-    /* 가게생성
-    name, minOrderAmount, openTime, closeTime */
+    /**
+     * 가게 수정 또는 생성
+     * @param restaurantRequestDto : 가게 생성 또는 수정에 필요한 정보
+     *                             id(수정에만 필요), name, minOrderAmount, openTime, closeTime, category
+     * @return 가게 수정시 200 OK, 가게 생성 시 201 Created
+     */
     @PostMapping
     public ResponseEntity<RestaurantResponseDto> createOrUpdateRestaurant(
             @Valid @RequestBody RestaurantRequestDto restaurantRequestDto,
             @Sign SignUser signUser) {
         Long userId = signUser.getId();
 
-        try {
-            // 가게 ID가 있으면 수정, 없으면 생성
-            RestaurantResponseDto responseDto;
-            if (restaurantRequestDto.getId() != null) {
-                // 가게 수정
-                responseDto = restaurantService.updateRestaurant(restaurantRequestDto, userId);
-                return ResponseEntity.status(HttpStatus.OK).body(responseDto);
-            } else {
-                // 가게 생성
-                responseDto = restaurantService.createRestaurant(restaurantRequestDto, userId);
-                return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-            }
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-        }
+        RestaurantResponseDto responseDto = restaurantService.createOrUpdateRestaurant(restaurantRequestDto, userId);
+        return ResponseEntity.status(responseDto.getId() != null ? HttpStatus.OK : HttpStatus.CREATED).body(responseDto);
     }
 
-    // 가게 목록 조회
-    @GetMapping
-    public ResponseEntity<List<RestaurantResponseDto>> getRestaurantsByName(
-            @RequestParam(required = false) String name) {
-        List<RestaurantResponseDto> restaurants = restaurantService.getRestaurantsbyName(name);
+    // 고객의 가게 다건 조회, 업종(카테고리로) 조회
+    @GetMapping("/category")
+    public ResponseEntity<List<RestaurantResponseDto>> getRestaurantsByCategory(
+            @RequestParam String category) {
+        List<RestaurantResponseDto> restaurants = restaurantService.getRestaurantsbyCategory(category);
         return ResponseEntity.ok(restaurants);
     }
 
-    // 가게 단건 조회
+    // 고객의 가게조회, 업종(카테고리)로 단건조회, 해당 가게의 메뉴포함
     @GetMapping("/{restaurantId}")
     public ResponseEntity<RestaurantDetailResponseDto> getRestaurantById(
             @PathVariable Long restaurantId) {
@@ -65,8 +56,16 @@ public class RestaurantController {
         return ResponseEntity.ok(restaurantDetail);
     }
 
+    // 사장님의 본인 가게 조회
+    @GetMapping("/owner/{ownerId}")
+    public ResponseEntity<List<RestaurantResponseDto>> getRestaurantsByOwner(
+            @PathVariable Long ownerId) {
+        List<RestaurantResponseDto> restaurants = restaurantService.getRestaurantsByOwner(ownerId);
+        return ResponseEntity.ok(restaurants);
+    }
+
     // 가게 폐업 시 상태만 폐업 상태로 변경
-    @PutMapping("/{restaurantId}/close")
+    @PutMapping("/{restaurantId}")
     public ResponseEntity<RestaurantResponseDto> closeRestaurant(
             @PathVariable Long restaurantId,
             @Sign SignUser signUser) {

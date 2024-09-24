@@ -28,8 +28,10 @@ public class RestaurantDetailResponseDto {
         this.minOrderAmount = restaurant.getMinOrderAmount();
         this.openTime = restaurant.getOpenTime();
         this.closeTime = restaurant.getCloseTime();
+
+        RestaurantDto restaurantDto = new RestaurantDto(restaurant);
         this.menus = availableMenus.stream()
-                .map(menu -> new MenuSaveResponseDto(menu.getName(), menu.getPrice(), new RestaurantDto(restaurant), menu.getId()))
+                .map(menu -> new MenuSaveResponseDto(menu.getName(), menu.getPrice(), restaurantDto, menu.getId()))
                 .collect(Collectors.toList());
     }
 }
