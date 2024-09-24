@@ -14,8 +14,8 @@ public class RestaurantResponseDto implements Serializable {
     private final Long id;
     private final String name;
     private final Long minOrderAmount;
-    private final LocalDateTime openTime;
-    private final LocalDateTime closeTime;
+    private final LocalTime openTime;
+    private final LocalTime closeTime;
     private final RestaurantStatus status;
 
     public RestaurantResponseDto(Restaurant restaurant) {

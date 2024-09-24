@@ -81,7 +81,7 @@ public class OrderService {
         String name = user.getName();
         String address = req.getAddress();
         OrderStatus orderstatus = PENDING;
-        Long restaurantid = req.getRestaurantId();
+        Long restaurantid = rest.getId();
         Long count = (long)cart.getCartItems().size();
         Orders orders = new Orders(user, address, name,rest,ordertime, orderstatus,count,totalPrice);
         Long ordersId=orders.getId();
@@ -111,7 +111,7 @@ public class OrderService {
         Long orderid = orders.getId();
 
         //orders Dto
-        OrderResponseDto orderDto = new OrderResponseDto(userId,address,name,ordertime,orderstatus,orderid,count, totalPrice);
+        OrderResponseDto orderDto = new OrderResponseDto(userId,address,name,ordertime,orderstatus,orderid,count, totalPrice,restaurantid);
         CombineDto resDto = new CombineDto(orderDto, orderDetails);
 
         return ResponseEntity.ok(resDto);
@@ -139,8 +139,9 @@ public class OrderService {
         Long orderId = order.getId();
         Long count = order.getCount();
         Long totalPrice = order.getTotalPrice();
+        Long restaurantid = order.getRestaurant().getId();
 
-        OrderResponseDto orderDto = new OrderResponseDto(userId, address, name, orderTime, status, orderId, count, totalPrice);
+        OrderResponseDto orderDto = new OrderResponseDto(userId, address, name, orderTime, status, orderId, count, totalPrice,restaurantid);
 
         //상세 정보를 Dto에 담기위한 과정
         for(OrderDetail orderDetail : orderDetails){
@@ -206,7 +207,8 @@ public class OrderService {
                     order.getStatus(),
                     order.getId(),
                     order.getCount(),
-                    order.getTotalPrice()
+                    order.getTotalPrice(),
+                    order.getRestaurant().getId()
             );
         }).collect(Collectors.toList());
 
