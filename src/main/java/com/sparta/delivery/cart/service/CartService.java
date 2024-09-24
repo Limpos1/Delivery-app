@@ -33,10 +33,10 @@ public class CartService {
     private final UserRepository userRepository;
 
     @Transactional
-    public CartSaveResponseDto saveCart(CartSaveRequestDto cartSaveRequestDto) {
+    public CartSaveResponseDto saveCart(Long userId,CartSaveRequestDto cartSaveRequestDto) {
         log.info("장바구니 저장 유저 확인");
         //userId로 먼저 유저 확인
-        User user = userRepository.findById(cartSaveRequestDto.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                         log.error("유저를 찾을 수 없습니다.");
                         return new IllegalArgumentException("User not found");

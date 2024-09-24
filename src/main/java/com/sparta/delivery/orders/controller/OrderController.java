@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/order")
 public class OrderController {
     private final OrderService orderService;
@@ -40,10 +40,11 @@ public class OrderController {
     // 주문 상태 변경 API
     @PatchMapping("/updates")
     //user 정보도 받아야 한다.
-    public OrderStatus updateOrder(@Sign SignUser user, Long orderid, OrderStatus oEnum) {
+    public OrderStatus updateOrder(@Sign SignUser user,Long orderid,String oEnum) {
         Long userId = user.getId();
-        return orderService.updateOrder(userId, orderid, oEnum);
-
+        OrderStatus status = orderService.updateOrder(userId, orderid, oEnum);
+        System.out.println(status);
+        return status;
     }
 
     //가게에서 주문 목록 보기 API

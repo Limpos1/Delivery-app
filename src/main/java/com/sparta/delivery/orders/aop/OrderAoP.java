@@ -27,10 +27,10 @@ import java.time.LocalDateTime;
 @Component
 public class OrderAoP {
     private static final Logger logger = LoggerFactory.getLogger(OrderAoP.class);
+//    @Autowired
+//    private OrderDetailRepository orderDetailRepository;
     @Autowired
-    OrderDetailRepository orderDetailRepository;
-    @Autowired
-    OrdersRepository ordersRepository;
+    private OrdersRepository ordersRepository;
 
     // 주문 생성 메서드를 위한 Pointcut
     @Pointcut("execution(* com.sparta.delivery.orders.service.OrderService.requestOrder(..))")

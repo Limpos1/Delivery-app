@@ -33,7 +33,7 @@ public class MenuService {
         }
         //사용자가 등록하려는 가게가 본인 가게인지 확인
         //RestaurantDto에서 가게ID로 실제 restaurant 엔티티 조회
-        Restaurant restaurant = restaurantRepository.findById(menuSaveRequestDto.getRestaurantDto().getStoreId())
+        Restaurant restaurant = restaurantRepository.findById(menuSaveRequestDto.getRestaurantId())
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
         if (!restaurant.getOwnerId().equals(user)) {
             throw new IllegalArgumentException("본인의 가게인지 확인하세요");
@@ -47,11 +47,11 @@ public class MenuService {
         );
         Menu savedMenu = menuRepository.save(menu);
 
-//        RestaurantDto restaurantDto = new RestaurantDto();
+        RestaurantDto restaurantDto = new RestaurantDto(restaurant);
         return new MenuSaveResponseDto(
                 savedMenu.getName(),
                 savedMenu.getPrice(),
-                menuSaveRequestDto.getRestaurantDto(),
+                restaurantDto,
                 savedMenu.getId()
         );
     }
