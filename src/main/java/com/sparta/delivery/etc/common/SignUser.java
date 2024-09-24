@@ -9,5 +9,4 @@ public class SignUser {
 
     private final Long id;
     private final String email;
-
 }
