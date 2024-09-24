@@ -39,8 +39,9 @@ public class SignUserArgumentResolver implements HandlerMethodArgumentResolver {
         // JwtFilter 에서 set 한 userId, email 값을 가져옴
         Long userId = (Long) request.getAttribute("userId");
         String email = (String) request.getAttribute("email");
+        String name = (String) request.getAttribute("name");
 
-        return new SignUser(userId, email);
+        return new SignUser(userId, email, name);
     }
 }
 

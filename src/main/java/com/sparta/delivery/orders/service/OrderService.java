@@ -42,7 +42,7 @@ public class OrderService {
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
     }
-    public ResponseEntity<CombineDto> requestOrder(Long userId, OrderRequestDto req) {
+    public ResponseEntity<CombineDto> requestOrder(Long userId, OrderRequestDto req,String inputName) {
         LocalDateTime ordertime = LocalDateTime.now();
         LocalDateTime openTime;
         LocalDateTime closeTime;
@@ -78,7 +78,7 @@ public class OrderService {
         if(price<rest.getMinOrderAmount()){
             throw new IllegalArgumentException("최소 주문 금액 이상이어야 합니다.");
         }
-        String name = user.getName();
+        String name = inputName;
         String address = req.getAddress();
         OrderStatus orderstatus = PENDING;
         Long restaurantid = rest.getId();
