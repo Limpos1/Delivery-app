@@ -13,9 +13,11 @@ import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.restaurant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.repository.UserRepository;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -40,21 +42,31 @@ public class OrderService {
     }
     public ResponseEntity<CombineDto> orderrequest(Long userId, OrderRequestDto req) {
         LocalDateTime ordertime = LocalDateTime.now();
-        User user = userRepository.findById(userId).orElse(null);
+        LocalDateTime openTime;
+        LocalDateTime closeTime;
+
+        User user = userRepository.findById(userId).orElseThrow(()-> new IllegalArgumentException("User not found"));
         Restaurant rest = restaurantRepository.findById(req.getRestaurantId()).orElseThrow(()->new IllegalArgumentException("등록된 식당이 없습니다."));
 
+        //---------------------------------------------------------------------------------------------------
 
-        LocalDateTime openTime = rest.getOpenTime();
-        LocalDateTime closeTime = rest.getCloseTime();
-        if(rest==null){
-            throw new IllegalArgumentException("Restaurant not found");
+        int openHour = rest.getOpenTime().getHour();
+        int openMinute = rest.getOpenTime().getMinute();
+        int closeHour = rest.getCloseTime().getHour();
+        int closeMinute = rest.getCloseTime().getMinute();
+
+        openTime = LocalDateTime.of(ordertime.getYear(),ordertime.getMonthValue(),ordertime.getDayOfMonth(),openHour,openMinute);
+        //만약 오후에 열고 새벽에 닫는 가게라면 현재 날짜에서 +1을 하여 다음날까지 계산
+        if(closeHour < openHour){
+            LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
+            closeTime = LocalDateTime.of(tomorrow.getYear(), tomorrow.getMonth(), tomorrow.getDayOfMonth(), closeHour, closeMinute);
+        }else{
+            closeTime = LocalDateTime.of(ordertime.getYear(), ordertime.getMonth(), ordertime.getDayOfMonth(), closeHour, closeMinute);
         }
+        //-----------------------------------------------------------------------------------------------------
+
         if(ordertime.isBefore(openTime) || ordertime.isAfter(closeTime)){
             throw new IllegalArgumentException("영업 시간이 아닙니다.");
-        }
-
-        if(user==null){
-            throw new IllegalArgumentException("User not found");
         }
 
         Long price = req.getPrice();
