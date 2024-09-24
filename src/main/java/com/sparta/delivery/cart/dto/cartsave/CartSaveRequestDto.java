@@ -7,6 +7,7 @@ import java.util.List;
 
 @Getter
 public class CartSaveRequestDto {
+
     private List<Long> menuId;
     private Long count;
 
