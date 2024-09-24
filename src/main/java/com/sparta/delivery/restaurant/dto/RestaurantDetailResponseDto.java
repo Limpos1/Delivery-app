@@ -16,8 +16,8 @@ public class RestaurantDetailResponseDto {
     private Long id;
     private String name;
     private Long minOrderAmount;
-    private LocalDateTime openTime;
-    private LocalDateTime closeTime;
+    private LocalTime openTime;
+    private LocalTime closeTime;
     private List<MenuSaveResponseDto> menus;
 
     public RestaurantDetailResponseDto(Restaurant restaurant, List<Menu> availableMenus) {
