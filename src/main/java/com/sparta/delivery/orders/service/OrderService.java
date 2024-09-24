@@ -17,6 +17,7 @@ import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,7 +43,7 @@ public class OrderService {
         this.userRepository = userRepository;
         this.restaurantRepository = restaurantRepository;
     }
-    public ResponseEntity<CombineDto> requestOrder(Long userId, OrderRequestDto req) {
+    public ResponseEntity<CombineDto> requestOrder(Long userId, OrderRequestDto req,String inputName) {
         LocalDateTime ordertime = LocalDateTime.now();
         LocalDateTime openTime;
         LocalDateTime closeTime;
@@ -78,12 +79,12 @@ public class OrderService {
         if(price<rest.getMinOrderAmount()){
             throw new IllegalArgumentException("최소 주문 금액 이상이어야 합니다.");
         }
-        String name = user.getName();
         String address = req.getAddress();
         OrderStatus orderstatus = PENDING;
         Long restaurantid = rest.getId();
         Long count = (long)cart.getCartItems().size();
-        Orders orders = new Orders(user, address, name,rest,ordertime, orderstatus,count,totalPrice);
+        Orders orders = new Orders(user, address, inputName,rest,ordertime, orderstatus,count,totalPrice);
+        ordersRepository.save(orders);
         Long ordersId=orders.getId();
 
         for(CartItem cartItem : cart.getCartItems()){
@@ -111,7 +112,7 @@ public class OrderService {
         Long orderid = orders.getId();
 
         //orders Dto
-        OrderResponseDto orderDto = new OrderResponseDto(userId,address,name,ordertime,orderstatus,orderid,count, totalPrice,restaurantid);
+        OrderResponseDto orderDto = new OrderResponseDto(userId,address, inputName,ordertime,orderstatus,orderid,count, totalPrice,restaurantid);
         CombineDto resDto = new CombineDto(orderDto, orderDetails);
 
         return ResponseEntity.ok(resDto);
@@ -165,9 +166,8 @@ public class OrderService {
         return ResponseEntity.ok(resDto);
     }
 
-    public OrderStatus updateOrder(Long userId, Long orderid, OrderStatus oEnum) {
+    public OrderStatus updateOrder(Long userId, Long orderid, String oEnum)  {
         Orders order = ordersRepository.findById(orderid).orElse(null);
-        OrderDetail orderDetail = orderDetailRepository.findByOrdersId(order);
         LocalDateTime modifyNow = LocalDateTime.now();
         User user = userRepository.findById(userId).orElse(null);
         if(user.getRole()!=OWNER){
@@ -180,8 +180,7 @@ public class OrderService {
             throw new IllegalArgumentException("User not found");
         }
       try{
-            orderDetail.setModifiedAt(modifyNow);
-            order.setStatus(oEnum);
+            order.setStatus(OrderStatus.valueOf(oEnum));
             ordersRepository.save(order);
       }catch(Exception e){
             throw new IllegalArgumentException("잘못된 요청입니다.");

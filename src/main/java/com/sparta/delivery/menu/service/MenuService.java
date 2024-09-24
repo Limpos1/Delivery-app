@@ -14,6 +14,8 @@ import com.sparta.delivery.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class MenuService {
@@ -33,7 +35,7 @@ public class MenuService {
         }
         //사용자가 등록하려는 가게가 본인 가게인지 확인
         //RestaurantDto에서 가게ID로 실제 restaurant 엔티티 조회
-        Restaurant restaurant = restaurantRepository.findById(menuSaveRequestDto.getRestaurantDto().getStoreId())
+        Restaurant restaurant = restaurantRepository.findById(menuSaveRequestDto.getRestaurantId())
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
         if (!restaurant.getOwnerId().equals(user)) {
             throw new IllegalArgumentException("본인의 가게인지 확인하세요");
@@ -47,11 +49,12 @@ public class MenuService {
         );
         Menu savedMenu = menuRepository.save(menu);
 
-//        RestaurantDto restaurantDto = new RestaurantDto();
+
+        RestaurantDto restaurantDto = new RestaurantDto(restaurant);
         return new MenuSaveResponseDto(
                 savedMenu.getName(),
                 savedMenu.getPrice(),
-                menuSaveRequestDto.getRestaurantDto(),
+                restaurantDto,
                 savedMenu.getId()
         );
     }
@@ -71,13 +74,20 @@ public class MenuService {
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new IllegalArgumentException("수정할 메뉴를 찾을 수 없습니다."));
 
-        //이 메뉴가 본인 가게 메뉴인지 확인
-        Restaurant restaurant = restaurantRepository.findById(menuUpdateRequestDto.getRestaurantDto().getStoreId())
-                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+        //사용자가 소유한 모든 가게 목록 조회
+        List<Restaurant> restaurants = restaurantRepository.findAllByOwnerId_Id(user.getId());
 
-        if (!restaurant.getOwnerId().equals(user)) {
-            throw new IllegalArgumentException("본인 가게인지 확인하세요.");
+        if (restaurants.isEmpty()) {
+            throw new IllegalArgumentException("소유한 가게가 없습니다.");
         }
+
+        //메뉴가 사용자의 특정 가게에 해당하는지 확인
+        boolean ownerRestaurant = restaurants.stream()
+                .anyMatch(restaurant -> restaurant.getId().equals(menuUpdateRequestDto.getRestaurantId()));
+        if(!ownerRestaurant) {
+            throw new IllegalArgumentException("본인 가게의 메뉴만 수정할 수 있습니다. 원하는 가게가 맞는지 확인하세요.");
+        }
+
 
         //메뉴 정보 업데이트(수정)
         menu.update(menuUpdateRequestDto.getName(),
@@ -85,11 +95,15 @@ public class MenuService {
 
         Menu updatedMenu = menuRepository.save(menu);
 
+        Restaurant restaurant = restaurantRepository.findById(menuUpdateRequestDto.getRestaurantId())
+                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+
+        RestaurantDto restaurantDto = new RestaurantDto(restaurant);
         return new MenuUpdateResponseDto(
                 updatedMenu.getId(),
                 updatedMenu.getName(),
                 updatedMenu.getPrice(),
-                menuUpdateRequestDto.getRestaurantDto()
+                restaurantDto
 
         );
 
@@ -108,15 +122,23 @@ public class MenuService {
         }
 
         //삭제할 메뉴 확인
-        Menu menu = menuRepository.findById((menuDeleteRequestDto.getUserId()))
+        Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(()-> new IllegalArgumentException("삭제할 메뉴를 찾을 수 없습니다."));
 
-        //해당 메뉴가 본인 가게 메뉴인지 확인
-        Restaurant restaurant = restaurantRepository.findById(menuDeleteRequestDto.getRestaurant().getStoreId())
-                .orElseThrow(()-> new IllegalArgumentException("가게를 찾을 수 없습니다."));
-        if (!restaurant.getOwnerId().equals(user)) {
-            throw new IllegalArgumentException("본인의 가게만 삭제 할 수 있습니다.");
+        //사용자가 소유한 가게 목록 조회
+        List<Restaurant> restaurants = restaurantRepository.findAllByOwnerId_Id(user.getId());
+
+        if (restaurants.isEmpty()) {
+            throw new IllegalArgumentException("소유한 가게가 없습니다.");
         }
+
+        //메뉴가 사용자의 특정 가게에 해당하는지 확인
+        boolean ownerRestaurant = restaurants.stream()
+                .anyMatch(restaurant -> restaurant.getId().equals(menuDeleteRequestDto.getRestaurantId()));
+        if(!ownerRestaurant) {
+            throw new IllegalArgumentException("본인 가게의 메뉴만 수정할 수 있습니다. 원하는 가게가 맞는지 확인하세요.");
+        }
+
 
         //메뉴 상태를 enum의 'DELETE'로 변경
         menu.updateStatus(MenuStatus.DELETED);
