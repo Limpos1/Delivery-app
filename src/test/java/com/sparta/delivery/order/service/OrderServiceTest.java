@@ -72,7 +72,7 @@ public class OrderServiceTest {
         restaurantRepository.save(rest);
 
 
-        OrderRequestDto requestDto = new OrderRequestDto(restaurantId, menuId, address, 15000L);
+        OrderRequestDto requestDto = new OrderRequestDto(restaurantId, address, 15000L);
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(rest));
 
