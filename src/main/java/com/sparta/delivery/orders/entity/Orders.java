@@ -31,6 +31,9 @@ public class Orders {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime orderTime; // 주문 시각
 
+    @Column(name = "modified_at")
+    private LocalDateTime modifyTime; // 주문 시각
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;

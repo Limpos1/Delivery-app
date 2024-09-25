@@ -167,24 +167,22 @@ public class OrderService {
     }
 
     public OrderStatus updateOrder(Long userId, Long orderid, String oEnum)  {
-        Orders order = ordersRepository.findById(orderid).orElse(null);
+        User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("User not found"));
+        Orders order = ordersRepository.findById(orderid).orElseThrow(()->new IllegalArgumentException("Order not found"));
+
         LocalDateTime modifyNow = LocalDateTime.now();
-        User user = userRepository.findById(userId).orElse(null);
+
         if(user.getRole()!=OWNER){
             throw new IllegalArgumentException("가게 사장님만 변경할 수 있습니다..");
         }
-        if(order==null){
-            throw new IllegalArgumentException("Order not found");
-        }
-        if(user==null){
-            throw new IllegalArgumentException("User not found");
-        }
       try{
             order.setStatus(OrderStatus.valueOf(oEnum));
+            order.setModifyTime(modifyNow);
             ordersRepository.save(order);
       }catch(Exception e){
             throw new IllegalArgumentException("잘못된 요청입니다.");
       }
+
         return order.getStatus();
     }
 

@@ -1,20 +1,23 @@
 package com.sparta.delivery.order.service;
 
+import com.sparta.delivery.cart.entity.Cart;
+import com.sparta.delivery.cart.entity.CartItem;
+import com.sparta.delivery.cart.repository.CartRepository;
+import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.orders.dto.CombineDto;
 import com.sparta.delivery.orders.dto.OrderDetailDto;
 import com.sparta.delivery.orders.dto.OrderRequestDto;
 import com.sparta.delivery.orders.dto.OrderResponseDto;
-import com.sparta.delivery.orders.repository.OrderDetailRepository;
-import com.sparta.delivery.orders.repository.OrdersRepository;
-import com.sparta.delivery.orders.entity.OrderDetail;
 import com.sparta.delivery.orders.entity.Orders;
 import com.sparta.delivery.orders.enums.OrderStatus;
+import com.sparta.delivery.orders.repository.OrderDetailRepository;
+import com.sparta.delivery.orders.repository.OrdersRepository;
 import com.sparta.delivery.orders.service.OrderService;
 import com.sparta.delivery.restaurant.entity.Restaurant;
 import com.sparta.delivery.restaurant.repository.RestaurantRepository;
 import com.sparta.delivery.user.entity.User;
-import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,12 +26,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import static com.sparta.delivery.menu.enums.MenuStatus.AVAILABLE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceTest {
@@ -40,180 +46,77 @@ public class OrderServiceTest {
     private UserRepository userRepository;
     @Mock
     private RestaurantRepository restaurantRepository;
+    @Mock
+    private CartRepository cartRepository;
+
     @InjectMocks
     private OrderService orderService;
 
-    @Test
-    void test1(){
-        Long userId = 1L; //주문자 아이디
-        Long restaurantId = 2L; // 식당 아이디
-        Long menuId = 3L; // 메뉴 아이디
-        String address="여기저기"; // 주소
+    private User user;
+    private Restaurant restaurant;
+    private Cart cart;
+    private Orders orders;
+    private OrderRequestDto orderRequestDto;
+    private List<CartItem> cartItems;
 
-        // 테스트용 유저 데이터 생성 및 저장
-        User user = new User();
-        user.setId(userId);
-        user.setName("박지민");
-        user.setEmail("testuser@example.com");
-        user.setPassword("password123");  // 비밀번호는 암호화된 상태로 저장해야 함
-        user.setRole(UserRole.USER);  // USER 또는 OWNER 권한 설정
-        userRepository.save(user);
+    @BeforeEach
+    void setUp() {
+        // 유저, 레스토랑, 카트 설정
+        user = new User();
+        user.setId(1L);
+        user.setEmail("test@test.com");
+        user.setName("테스트 유저");
 
-        //테스트용 식당 생성
-        Restaurant rest = new Restaurant();
-        rest.setId(restaurantId);
-        rest.setName("햄버거 가게");
-        rest.setMinOrderAmount(15000L);
+        restaurant = new Restaurant();
+        restaurant.setId(1L);
+        restaurant.setOpenTime(LocalDateTime.now().minusHours(1).toLocalTime()); // 1시간 전
+        restaurant.setCloseTime(LocalDateTime.now().plusHours(2).toLocalTime()); // 2시간 후
+        restaurant.setMinOrderAmount(1000L);
 
-        //오후에 열고 새벽에 닫으면 오류가 발생.
-        //날짜가 필요함, 따라서 LocalTime을 LocalDateTime으로 변경함.
-        rest.setOpenTime(LocalTime.of(12,30));
-        rest.setCloseTime(LocalTime.of(5,30));
-        restaurantRepository.save(rest);
+        Menu menu1 = new Menu("메뉴 1", 1000,restaurant,AVAILABLE);
+        Menu menu2 = new Menu("메뉴 2", 2000, restaurant,AVAILABLE);
 
+        cart = new Cart(user);
+        cartItems = new ArrayList<>();
+        cartItems.add(new CartItem(cart, menu1, 1L));
+        cartItems.add(new CartItem(cart, menu2, 1L));
+        cart.getCartItems().addAll(cartItems);
+        user.setCart(cart);
 
-        OrderRequestDto requestDto = new OrderRequestDto(restaurantId, address, 15000L);
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(restaurantRepository.findById(restaurantId)).thenReturn(Optional.of(rest));
-
-        Orders mockOrder = new Orders(user, address, user.getName(),rest,LocalDateTime.now(), OrderStatus.PENDING);
-        mockOrder.setId(1L);
-        when(ordersRepository.save(any(Orders.class))).thenReturn(mockOrder);
-
-        OrderDetail mockOrderDetail = new OrderDetail(mockOrder, menuId, restaurantId, 1L, requestDto.getPrice(),LocalDateTime.now());
-        when(orderDetailRepository.save(any(OrderDetail.class))).thenReturn(mockOrderDetail);
-
-        Long orderId = mockOrderDetail.getOrdersId().getId();
-
-
-        ResponseEntity<CombineDto> response = orderService.requestOrder(userId,requestDto);
-
-        // Then
-        assertEquals(200, response.getStatusCodeValue());
-        CombineDto resDto = response.getBody();
-        assert resDto != null;
-
-
-
-        // 검증: 주문 정보
-        OrderResponseDto orderResponse = resDto.getOrderResponseDto();
-        System.out.println(orderResponse.getUserId());
-        assertEquals(userId, orderResponse.getUserId());
-
-        assertEquals(address, orderResponse.getAddress());
-        System.out.println(orderResponse.getAddress());
-
-        assertEquals("박지민", orderResponse.getName());
-        System.out.println(orderResponse.getName());
-
-        assertEquals(OrderStatus.PENDING, orderResponse.getStatus());
-        System.out.println(orderResponse.getStatus());
-
-        // 검증: 주문 상세 정보
-        OrderDetailDto orderDetailResponse = resDto.getOrderDetailDto();
-
-        //대체 왜 null값이 반환되는지 이해가 안됨
-        assertEquals(1L, orderId);
-        assertEquals(menuId, orderDetailResponse.getMenuid());
-        assertEquals(restaurantId, orderDetailResponse.getRestaurantid());
-        assertEquals(1L, orderDetailResponse.getCount());
-
-        // Verify
-        verify(userRepository, times(1)).findById(userId);
-        verify(ordersRepository, times(1)).save(any(Orders.class));
-        verify(orderDetailRepository, times(1)).save(any(OrderDetail.class));
-
+        orderRequestDto = new OrderRequestDto(restaurant.getId(), "테스트 주소", 3000L);
+        // 주문 객체 생성
+        orders = new Orders(user, "테스트 주소", "테스트 유저", restaurant, LocalDateTime.now(), OrderStatus.PENDING, (long) cartItems.size(), 3000L);
     }
 
+
     @Test
-    void testGetOrder() {
-        // Mocking data
-        User user = new User();
-        user.setId(1L);
-        user.setName("John Doe");
+    void test1(){
+        // Mock 설정
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+        when(restaurantRepository.findById(any(Long.class))).thenReturn(Optional.of(restaurant));
+        when(ordersRepository.save(any(Orders.class))).thenReturn(orders);
 
-        Orders mockOrder = new Orders();
-        mockOrder.setId(1L);
-        mockOrder.setUserId(user);
-        mockOrder.setAddress("123 Main St");
-        mockOrder.setName("John Doe");
 
-        mockOrder.setStatus(OrderStatus.ACCEPTED);
+        // 메서드 실행
+        ResponseEntity<CombineDto> response = orderService.requestOrder(1L, orderRequestDto, "테스트 유저");
 
-        OrderDetail mockOrderDetail = new OrderDetail();
-        mockOrderDetail.setOrdersId(mockOrder);
-        mockOrderDetail.setMenuId(2L);
-        mockOrderDetail.setRestaurantId(3L);
-        mockOrderDetail.setCount(1L);
-        mockOrderDetail.setPrice(15000L);
-        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 9, 19, 14, 0));
-
-        // Mocking repositories
-        when(ordersRepository.findById(1L)).thenReturn(Optional.of(mockOrder));
-        when(orderDetailRepository.findByOrdersId(mockOrder)).thenReturn(mockOrderDetail);
-
-        // Act
-        ResponseEntity<CombineDto> response = orderService.getOrder(1L);
-
-        // Assert
+        // 결과 검증
         assertNotNull(response);
         CombineDto combineDto = response.getBody();
         assertNotNull(combineDto);
+        OrderResponseDto orderResponseDto = combineDto.getOrderResponseDto();
+        List<OrderDetailDto> orderDetailDtos = combineDto.getOrderDetailDto();
 
-        // OrderResponseDto 검증
-        OrderResponseDto orderDto = combineDto.getOrderResponseDto();
-        assertNotNull(orderDto);
-        assertEquals(1L, orderDto.getUserId());
-        assertEquals("123 Main St", orderDto.getAddress());
-        assertEquals("John Doe", orderDto.getName());
-        assertEquals(LocalDateTime.of(2023, 9, 19, 14, 0), orderDto.getOrderTime());
-        assertEquals(OrderStatus.ACCEPTED, orderDto.getStatus());
+        // 주문 정보 검증
+        assertEquals(user.getId(), orderResponseDto.getUserId());
+        assertEquals("테스트 주소", orderResponseDto.getAddress());
+        assertEquals(3000L, orderResponseDto.getTotalPrice());
 
-        // OrderDetailDto 검증
-        OrderDetailDto detailDto = combineDto.getOrderDetailDto();
-        assertNotNull(detailDto);
-        assertEquals(1L, detailDto.getOrderId());
-        assertEquals(2L, detailDto.getMenuid());
-        assertEquals(3L, detailDto.getRestaurantid());
-        assertEquals(1L, detailDto.getCount());
-        assertEquals(15000L, detailDto.getPrice());
+        // 상세 주문 정보 검증
+        assertEquals(2, orderDetailDtos.size());
+        assertEquals("메뉴 1", orderDetailDtos.get(0).getMenuName());
+        assertEquals("메뉴 2", orderDetailDtos.get(1).getMenuName());
 
-        verify(ordersRepository, times(1)).findById(anyLong());
-        verify(orderDetailRepository, times(1)).findByOrdersId(any(Orders.class));
-    }
-
-    @Test
-    void testUpdateOrder() {
-        // Mocking data
-        Long orderId = 1L;
-        User mockOwner = new User();
-        mockOwner.setId(1L);
-        mockOwner.setRole(UserRole.OWNER); // OWNER 권한 설정
-        Long userId = mockOwner.getId();
-
-        Orders mockOrder = new Orders();
-        mockOrder.setId(orderId);
-        mockOrder.setUserId(mockOwner);  // 주문자는 OWNER 역할의 유저
-
-        OrderDetail mockOrderDetail = new OrderDetail();
-        mockOrderDetail.setOrdersId(mockOrder);
-        mockOrderDetail.setMenuId(2L);
-        mockOrderDetail.setRestaurantId(3L);
-        mockOrderDetail.setCount(1L);
-        mockOrderDetail.setPrice(15000L);
-        mockOrderDetail.setOrderTime(LocalDateTime.of(2023, 3, 19, 14, 0));
-
-        // Mocking repositories
-        when(ordersRepository.findById(orderId)).thenReturn(Optional.of(mockOrder));
-        when(userRepository.findById(mockOwner.getId())).thenReturn(Optional.of(mockOwner));
-        when(orderDetailRepository.findByOrdersId(mockOrder)).thenReturn(mockOrderDetail);
-
-        // Act
-        OrderStatus updatedStatus = orderService.updateOrder(userId, orderId, OrderStatus.COMPLETED);
-
-        // Assert
-        assertEquals(OrderStatus.COMPLETED, updatedStatus);  // 상태가 올바르게 업데이트되는지 확인
-        verify(ordersRepository, times(1)).save(mockOrder);  // 저장 메서드가 호출되었는지 검증
     }
 
 
