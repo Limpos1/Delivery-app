@@ -21,6 +21,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
@@ -41,6 +43,12 @@ class CartServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private RedisTemplate<String, Cart> redisTemplate;
+
+    @Mock
+    private ValueOperations<String, Cart> valueOperations;
 
     @InjectMocks
     private CartService cartService;
@@ -64,15 +72,15 @@ class CartServiceTest {
         restaurant = new Restaurant();
         ReflectionTestUtils.setField(restaurant, "id", 1L);  // 임시로 restaurantId를 1L로 설정
 
-        menu1 = new Menu("메뉴 1", 10000, restaurant , MenuStatus.AVAILABLE);
-        menu2 = new Menu("메뉴 2", 20000, restaurant , MenuStatus.AVAILABLE);
+        menu1 = new Menu("메뉴 1", 10000, restaurant, MenuStatus.AVAILABLE);
+        menu2 = new Menu("메뉴 2", 20000, restaurant, MenuStatus.AVAILABLE);
 
         cart = new Cart();
         cart.addOrUpdateMenu(menu1, 2L);
         cart.addOrUpdateMenu(menu2, 1L);
 
         List<Long> menuId = Arrays.asList(1L, 2L);
-        cartSaveRequestDto = new CartSaveRequestDto(1L, menuId, null);
+        cartSaveRequestDto = new CartSaveRequestDto(menuId, 1L);
     }
 
     @Test
@@ -85,8 +93,11 @@ class CartServiceTest {
         when(menuRepository.findById(2L)).thenReturn(Optional.of(menu2));  // Optional<Menu> 반환
         when(cartRepository.save(any(Cart.class))).thenReturn(cart);  // 카트 저장 Mock 설정
 
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get(anyString())).thenReturn(null);
+
         // saveCart 메서드 호출
-        CartSaveResponseDto response = cartService.saveCart(cartSaveRequestDto);
+        CartSaveResponseDto response = cartService.saveCart(user.getId(), cartSaveRequestDto);
 
         // 검증
         assertNotNull(response);  // 응답이 null이 아님을 확인
@@ -98,10 +109,8 @@ class CartServiceTest {
     }
 
 
-
-
     @Test
-    void getViewAllTest(){
+    void getViewAllTest() {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
         when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));
 
@@ -114,12 +123,12 @@ class CartServiceTest {
     }
 
     @Test
-    void updateCart(){
+    void updateCart() {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
         when(cartRepository.findByUser(any(User.class))).thenReturn(Optional.of(cart));
         when(menuRepository.findById(1L)).thenReturn(Optional.of(menu1));
 
-        CartUpdateResponseDto response = cartService.updateCart(user.getId(),1L,3L);
+        CartUpdateResponseDto response = cartService.updateCart(user.getId(), 1L, 3L);
 
         assertNotNull(response);
         assertEquals(user.getId(), response.getUserId());
@@ -130,7 +139,7 @@ class CartServiceTest {
     }
 
     @Test
-    void deleteCart(){
+    void deleteCart() {
         when(cartRepository.existsById(anyLong())).thenReturn(true);
 
         cartService.deleteCart(user.getId());
