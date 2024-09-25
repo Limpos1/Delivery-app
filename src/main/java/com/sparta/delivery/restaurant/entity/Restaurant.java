@@ -25,6 +25,9 @@ public class Restaurant {
     @Column(name = "store_name", nullable = false, length = 50)
     private String name; // 가게 이름
 
+    @Enumerated(EnumType.STRING)
+    private RestaurantCategory category; // 가게업종(KOREAN, WESTERN, CHINESE, JAPANESE)
+
     @Column(name = "min_order_price", nullable = false)
     private Long minOrderAmount; // 최소 주문 금액
 
@@ -43,12 +46,9 @@ public class Restaurant {
     @Enumerated(EnumType.STRING)
     private RestaurantStatus status = RestaurantStatus.OPEN; // 가게상태(OPEN, CLOSED)
 
-    @Enumerated(EnumType.STRING)
-    private RestaurantCategory category; // 가게업종(KOREAN, WESTERN, CHINESE, JAPANESE)
-
     // 가게 생성
     public Restaurant(
-            String name, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, User owner, RestaurantCategory category) {
+            String name, RestaurantCategory category, Long minOrderAmount, LocalTime openTime, LocalTime closeTime, User owner) {
         // 최소 주문 금액 : 10,000 이상
         if (minOrderAmount < 10000) {
             throw new IllegalArgumentException("최소 주문 금액 10,000원 이상이어야 합니다.");

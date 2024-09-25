@@ -80,11 +80,11 @@ public class RestaurantService {
 
         Restaurant restaurant = new Restaurant(
                 requestDto.getName(),
+                requestDto.getCategory(),
                 requestDto.getMinOrderAmount(),
                 openTime,
                 closeTime,
-                user,
-                requestDto.getCategory()
+                user
                 );
 
         restaurantRepository.save(restaurant);

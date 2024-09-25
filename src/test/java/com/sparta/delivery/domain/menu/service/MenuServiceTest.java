@@ -91,7 +91,7 @@ public class MenuServiceTest {
         user.setStatus(UserStatus.NON_WITHDRAWAL);
 
         //restaurant mock
-        Restaurant restaurant = new Restaurant("Test Restaurant", 10000L, LocalTime.of(9, 0), LocalTime.of(22, 0), user, RestaurantCategory.KOREAN);
+        Restaurant restaurant = new Restaurant("Test Restaurant", RestaurantCategory.KOREAN, 10000L, LocalTime.of(9, 0), LocalTime.of(22, 0), user);
         restaurant.setId(restaurantId);
 
         //User와 Restaurant 연결

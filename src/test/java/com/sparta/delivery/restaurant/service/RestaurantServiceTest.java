@@ -1,5 +1,6 @@
 package com.sparta.delivery.restaurant.service;
 
+import com.sparta.delivery.menu.entity.Menu;
 import com.sparta.delivery.menu.enums.MenuStatus;
 import com.sparta.delivery.menu.repository.MenuRepository;
 import com.sparta.delivery.restaurant.dto.RestaurantDetailResponseDto;
@@ -20,18 +21,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalTime;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class RestaurantServiceTest {
-
-    // @Mock : 테스트에서 사용할 의존성(레포지토리나 서비스 클래스)을 목(mock)으로 설정.
     @Mock
     private RestaurantRepository restaurantRepository;
     @Mock
@@ -41,154 +42,220 @@ public class RestaurantServiceTest {
     @InjectMocks
     private RestaurantService restaurantService;
 
+    // 가게생성 성공 테스트
     @Test
-    public void 가게_생성_성공() {
+    void 가게생성_성공() {
         // given: 의존성 설정
         Long userId = 1L;
+        SignupRequestDto signupRequestDto = new SignupRequestDto(
+                "test@naver.com",
+                "encodedPassword",
+                "Test User",
+                UserRole.OWNER
+        );
+        User owner = new User(signupRequestDto, "encodedPassword");
+
         RestaurantRequestDto requestDto = new RestaurantRequestDto(
                 "Test Restaurant",
+                RestaurantCategory.KOREAN,
                 10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
-                RestaurantCategory.KOREAN
-        );
+                "10:00",
+                "22:00");
 
-        // 유저 생성 및 열할 설정
-        User user = new User("test@naver.com", "encodedPasword", UserRole.OWNER);
-        Restaurant restaurant = new Restaurant(
-                "Test Restaurant",
-                10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
-                user,
-                RestaurantCategory.KOREAN
-        )
-
-        // 가짜 데이터 설정
-        given(userRepository.findById(userId)).willReturn(Optional.of(user)); // 유저 찾기
-        given(restaurantRepository.countByOwnerId(user)).willReturn(0L); // 가게 수
-        given(restaurantRepository.save(any(Restaurant.class))).willReturn();
+        given(userRepository.findById(userId)).willReturn(Optional.of(owner)); // 유저 찾기
+        given(restaurantRepository.countByOwnerId(owner)).willReturn(1L); // 가게 수
+        given(restaurantRepository.save(any(Restaurant.class))).willReturn(new Restaurant());
 
         // when : 가게 생성 메서드 호출
-        RestaurantResponseDto result = restaurantService.createRestaurant(requestDto, userId);
+        RestaurantResponseDto responseDto = restaurantService.createRestaurant(requestDto, userId);
 
         // then : 결과 검증
-        assertNotNull(result);
-        assertEquals("Test Restaurant", result.getName()); // 가게 이름 검증
-        assertEquals(10000L, result.getMinOrderAmount()); // 최소 주문 금액 검증
+        assertNotNull(responseDto);
+        assertEquals("Test Restaurant", responseDto.getName()); // 가게 이름 검증
+        then(restaurantRepository).should().save(any(Restaurant.class)); // 최소 주문 금액 검증
     }
 
+    // 가게생성 실패 테스트
     @Test
-    public void 가게_수정_성공() {
+    void 가게생성_실패_유저_권한없음() {
+        // given
+        Long userId = 1L;
+        SignupRequestDto signupRequestDto = new SignupRequestDto(
+                "testuser@gmail.com",
+                "encodedPassword",
+                "Test User",
+                UserRole.USER
+        );
+        User nonOwner = new User(signupRequestDto, "encodedPassword");
+
+        RestaurantRequestDto requestDto = new RestaurantRequestDto(
+                "Test User Restaurant",
+                RestaurantCategory.WESTERN,
+                30000L,
+                "09:00",
+                "19:00");
+
+        given(userRepository.findById(userId)).willReturn(Optional.of(nonOwner));
+
+        // When&Then
+        assertThrows(IllegalArgumentException.class, () -> restaurantService.createRestaurant(requestDto, userId));
+        then(restaurantRepository).should(never()).save(any(Restaurant.class));
+    }
+
+    // 가게수정 성공 테스트
+    @Test
+    void 가게수정_성공() {
         // given
         Long restaurantId = 1L;
         Long userId = 1L;
-        RestaurantRequestDto requestDto = new RestaurantRequestDto(
-                restaurantId,
-                "Updated Restaurant",
-                10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
-                "Category"
-        );
+        SignupRequestDto signupRequestDto = new SignupRequestDto(
+                "test@naver.com",
+                "encodedPassword",
+                "Test Owner",
+                UserRole.OWNER);
 
-        User user = new User(userId, UserRole.OWNER);
+        User owner = new User(signupRequestDto, "encodedPassword");
 
         Restaurant restaurant = new Restaurant(
-                "Test Restaurant",
-                10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
-                user,
-                "Category"
+                "Owner Restaurant",
+                RestaurantCategory.CHINESE,
+                80000L,
+                LocalTime.of(9, 0),
+                LocalTime.of(22, 0),
+                owner
         );
 
-        given(restaurantRepository.findByIdAndOwnerId(restaurantId, user)).willReturn(Optional.of());
-        given(restaurantRepository.save(any(Restaurant.class))).willReturn();
+        RestaurantRequestDto updateRequestDto = new RestaurantRequestDto(
+                "Update Restaurant", // 이 이름을 기대합니다
+                RestaurantCategory.KOREAN,
+                120000L,
+                "10:00",
+                "16:00"
+        );
 
-        RestaurantResponseDto result = restaurantService.createOrUpdateRestaurant(requestDto, userId);
+        given(restaurantRepository.findByIdAndOwnerId(restaurantId, owner)).willReturn(Optional.of(restaurant));
+        given(userRepository.findById(userId)).willReturn(Optional.of(owner));
 
-        assertNotNull(result);
-        assertEquals("Updated Restaurant", result.getName());
+        // When
+        RestaurantResponseDto responseDto = restaurantService.updateRestaurant(restaurantId, updateRequestDto, userId);
+
+        // Then
+        assertNotNull(responseDto);
+        assertEquals(updateRequestDto.getName(), responseDto.getName()); // 수정된 이름 검증
+        then(restaurantRepository).should().save(restaurant); // restaurant가 저장되었는지 검증
     }
 
+    // 유저가게조회 (업종으로 다건조회) 테스트
     @Test
-    public void 가게_다건_조회_성공() {
+    void 유저가게조회_성공_업종다건조회() {
         // given : 가게 객체 생성
-        Restaurant restaurant = new Restaurant(
-                "Test Restaurant",
-                10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
-                new User(),
-                "Category"
-        );
+        String category = "KOREAN";
+        SignupRequestDto signupRequestDto = new SignupRequestDto(
+                "test@naver.com",
+                "encodedPassword",
+                "Test Owner",
+                UserRole.USER);
 
-        given(restaurantRepository.findByCategoryContainingAndStatus("Test", RestaurantStatus.OPEN))
-                .willReturn(Collections.singletonList(restaurant)); // 가게 목록 설정
+        User user = new User(signupRequestDto, "encodedPassword");
 
-        // when : 가게 다건 조회 메서드 호출
-        List<RestaurantResponseDto> result = restaurantService.getRestaurantsbyCategory("Test");
+        Restaurant restaurant1 = new Restaurant("Restaurant 1", RestaurantCategory.KOREAN, 10000L, LocalTime.of(10, 0), LocalTime.of(22, 0), user);
+        Restaurant restaurant2 = new Restaurant("Restaurant 2", RestaurantCategory.KOREAN, 20000L, LocalTime.of(9, 0), LocalTime.of(19, 0), user);
 
-        // then : 결과 검증
-        assertNotNull(result);
-        assertEquals(1, result.size()); // 결과 개수 검증
-        assertEquals("Test Restaurant", result.get(0).getName()); // 가게 이름 검증
+        List<Restaurant> restaurants = Arrays.asList(restaurant1, restaurant2);
+        given(restaurantRepository.findByCategoryContainingAndStatus(category, RestaurantStatus.OPEN)).willReturn(restaurants);
+
+        // when
+        List<RestaurantResponseDto> responseDtos = restaurantService.getRestaurantsbyCategory(category);
+
+        // then
+        assertNotNull(responseDtos);
+        assertEquals(2, responseDtos.size()); // 가게 수 검증
+        assertEquals("Restaurant 1", responseDtos.get(0).getName());
+        assertEquals("Restaurant 2", responseDtos.get(1).getName());
     }
 
+    // 유저가게조회 (단건조회 메뉴포함) 테스트
     @Test
-    public void 가게_단건_조회_성공() {
-        // given : 단건 조회 가게 객체 생성
+    void 가게조회_성공_단건() {
+        // given
         Long restaurantId = 1L;
-        Restaurant restaurant = new Restaurant(
-                "Test Restaurant",
-                10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
-                new User(),
-                "Category"
+        SignupRequestDto signupRequestDto = new SignupRequestDto(
+                "test@naver.com",
+                "encodedPassword",
+                "Test Owner",
+                UserRole.USER
         );
+        User user = new User(signupRequestDto, "encodedPassword");
 
-        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant)); // 가게 조회
-        given(menuRepository.findAllByRestaurantAndStatus(restaurant, MenuStatus.AVAILABLE).willReturn(Collections.emptyList()); // 메뉴가 없다고 가정
+        Restaurant restaurant = new Restaurant("Restaurant", RestaurantCategory.KOREAN, 10000L, LocalTime.of(10, 0), LocalTime.of(22, 0), user);
+        restaurant.setStatus(RestaurantStatus.OPEN);
 
-        // when : 가게 단건 조회 메서드 호출
-        RestaurantDetailResponseDto result = restaurantService.getRestaurantById(restaurantId);
+        Menu menu = new Menu("Menu Item", 15000, restaurant, MenuStatus.AVAILABLE);
 
-        // then : 결과 검증
-        assertNotNull(result);
-        assertEquals("Test Restaurant", result.getName()); // 가게 이름 검증
-        assertTrue(result.getMenus().isEmpty()); // 메뉴가 없으면 빈 리스트여야 함
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
+        given(menuRepository.findAllByRestaurantAndStatus(restaurant, MenuStatus.AVAILABLE)).willReturn(Arrays.asList(menu));
+
+        // when
+        RestaurantDetailResponseDto responseDto = restaurantService.getRestaurantById(restaurantId);
+
+        // then
+        assertNotNull(responseDto);
+        assertEquals("Restaurant", responseDto.getName());
+        assertEquals(1, responseDto.getMenus().size()); // 메뉴 수 검증
+        assertEquals("Menu Item", responseDto.getMenus().get(0).getName()); // 메뉴 이름 검증
     }
 
+    // 가게조회 실패 테스트
     @Test
-    public void 가게_폐업_성공() {
-        // given : 폐업 테스트 객체 생성
+    void 가게조회_실패_영업중아님() {
+        // given
+        Long restaurantId = 1L;
+        SignupRequestDto signupRequestDto = new SignupRequestDto(
+                "test@naver.com",
+                "encodedPassword",
+                "Test Owner",
+                UserRole.USER
+        );
+        User user = new User(signupRequestDto, "encodedPassword");
+
+        Restaurant restaurant = new Restaurant("Closed Restaurant", RestaurantCategory.KOREAN, 10000L, LocalTime.of(10, 0), LocalTime.of(22, 0), user);
+        restaurant.closeRestaurant(); // 가게 폐업 처리
+
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant));
+        assertThrows(IllegalArgumentException.class, () -> restaurantService.getRestaurantById(restaurantId));
+    }
+
+    // 가게폐업 테스트
+    @Test
+    void 가게폐업_성공() {
+        // given: 의존성 설정
         Long restaurantId = 1L;
         Long ownerId = 1L;
-
-        User owner = new User();
-        owner.setId(ownerId);
-        owner.setRole(UserRole.OWNER);
-
-        Restaurant restaurant = new Restaurant(
-                "Test Restaurant",
-                10000L,
-                LocalTime.parse("10:00"),
-                LocalTime.parse("22:00"),
-                owner,
-                "Category"
+        SignupRequestDto signupRequestDto = new SignupRequestDto(
+                "owner@naver.com",
+                "encodedPassword",
+                "Test Owner",
+                UserRole.OWNER
         );
 
-        given(userRepository.findById(ownerId)).willReturn(Optional.of(owner)); // 소유자 조회
-        given(restaurantRepository.findByIdAndOwnerId(restaurantId, owner)).willReturn(Optional.of(restaurant)); // 가게 조회
+        User owner = new User(signupRequestDto, "encodedPassword") {
+            @Override
+            public Long getId() {
+                return ownerId; // ownerId를 직접 반환
+            }
+        };
 
-        // when : 가게 폐업 메서드 호출
-        RestaurantResponseDto result = restaurantService.closeRestaurant(restaurantId, ownerId);
+        Restaurant restaurant = new Restaurant("Owner Restaurant", RestaurantCategory.CHINESE, 80000L, LocalTime.of(9, 0), LocalTime.of(22, 0), owner);
+        given(userRepository.findById(ownerId)).willReturn(Optional.of(owner)); // 사용자 Mocking 추가
+        given(restaurantRepository.findByIdAndOwnerId(restaurantId, owner)).willReturn(Optional.of(restaurant));
 
-        // then : 결과 검증
-        assertNotNull(result);
-        assertEquals("Test Restaurant", result.getName()); // 가게 이름 검증
-        assertEquals(RestaurantStatus.CLOSED, restaurant.getStatus()); // 상태가 변경되었는지 확인
+        // when: 가게 폐업 메서드 호출
+        RestaurantResponseDto responseDto = restaurantService.closeRestaurant(restaurantId, ownerId);
+
+        // then: 결과 검증
+        assertNotNull(responseDto);
+        assertEquals("Owner Restaurant", responseDto.getName()); // 가게 이름 검증
+        assertEquals(RestaurantStatus.CLOSED, restaurant.getStatus()); // 상태가 CLOSED로 변경되었는지 검증
+        then(restaurantRepository).should().findByIdAndOwnerId(restaurantId, owner); // 레포지토리 호출 검증
     }
 }
