@@ -11,6 +11,7 @@ import com.sparta.delivery.user.entity.User;
 import com.sparta.delivery.user.enums.UserRole;
 import com.sparta.delivery.user.enums.UserStatus;
 import com.sparta.delivery.user.repository.UserRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -52,7 +53,7 @@ class AuthServiceTest {
 
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(password, user.getPassword())).willReturn(true);
-        given(jwtUtil.createToken(user.getId(), user.getEmail())).willReturn("mocked_jwt_token");
+        given(jwtUtil.createToken(user.getId(), user.getEmail(), user.getName())).willReturn("mocked_jwt_token");
 
         // When
         String token = authService.login(requestDto);
@@ -62,7 +63,7 @@ class AuthServiceTest {
         assertEquals("mocked_jwt_token", token);
         then(userRepository).should().findByEmail(email);
         then(passwordEncoder).should().matches(password, user.getPassword());
-        then(jwtUtil).should().createToken(user.getId(), user.getEmail());
+        then(jwtUtil).should().createToken(user.getId(), user.getEmail(), user.getName());
     }
 
     @Test
@@ -78,7 +79,7 @@ class AuthServiceTest {
         assertThrows(NoSignedUserException.class, () -> authService.login(requestDto));
         then(userRepository).should().findByEmail(email);
         then(passwordEncoder).should(never()).matches(anyString(), anyString());
-        then(jwtUtil).should(never()).createToken(anyLong(), anyString());
+        then(jwtUtil).should(never()).createToken(anyLong(), anyString(), anyString());
     }
 
     @Test
@@ -100,7 +101,7 @@ class AuthServiceTest {
         assertThrows(WrongPasswordException.class, () -> authService.login(requestDto));
         then(userRepository).should().findByEmail(email);
         then(passwordEncoder).should().matches(password, user.getPassword());
-        then(jwtUtil).should(never()).createToken(anyLong(), anyString());
+        then(jwtUtil).should(never()).createToken(anyLong(), anyString(), anyString());
     }
 
     @Test
@@ -123,6 +124,6 @@ class AuthServiceTest {
         assertThrows(NoSignedUserException.class, () -> authService.login(requestDto));
         then(userRepository).should().findByEmail(email);
         then(passwordEncoder).should().matches(password, user.getPassword());
-        then(jwtUtil).should(never()).createToken(anyLong(), anyString());
+        then(jwtUtil).should(never()).createToken(anyLong(), anyString(), anyString());
     }
 }
